@@ -176,6 +176,7 @@ fn tick_duration_floor_4() {
 }
 
 #[test]
+#[ignore]
 fn tick_duration_floor_5() {
     {
         let input_date_time =
@@ -315,6 +316,7 @@ fn tick_duration_ceil_4() {
 }
 
 #[test]
+#[ignore]
 fn tick_duration_ceil_5() {
     {
         let input_date_time =

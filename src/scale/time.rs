@@ -5,6 +5,8 @@ use crate::error::{Result, ScaleError};
 use crate::scale::continuous::*;
 use crate::interpolate::{RangeInterpolator, NumberInterpolator};
 
+use date_iterator::{calendar_duration, CalendarDuration};
+
 use chrono::prelude::*;
 
 const RFC_3339_FMT: &str = "%Y-%m-%dT%H:%M:%S";
@@ -109,8 +111,20 @@ where
         self.interpolator.interpolate_range(&self.range, normalized)
     }
 
-    fn ticks(&self, _tick_count: Option<i32>) -> Vec<f64> {
-        unimplemented!()
+    fn ticks(&self, tick_count: Option<i32>) -> Vec<NaiveDateTime> {
+        let tick_count = match tick_count {
+            Some(tick_count) => tick_count,
+            None => 10,
+        };
+
+        let interval = self.domain.tick_increment(tick_count);
+
+        (0..=tick_count).map(|i| {
+            use std::ops::Mul;
+
+            let offset = CalendarDuration::from(&interval).mul(i);
+            calendar_duration::naive_add(&self.domain.start, &offset)
+        }).collect()
     }
 }
 
@@ -168,26 +182,21 @@ fn nice_multi_year() -> Result<()> {
     Ok(())
 }
 
-// tape("time.ticks(count) can generate 1-second ticks", function(test) {
-//     var x = scale.scaleTime().domain([date.local(2011, 0, 1, 12, 0, 0), date.local(2011, 0, 1, 12, 0, 4)]);
-//     test.deepEqual(x.ticks(4), [
-//       date.local(2011, 0, 1, 12, 0, 0),
-//       date.local(2011, 0, 1, 12, 0, 1),
-//       date.local(2011, 0, 1, 12, 0, 2),
-//       date.local(2011, 0, 1, 12, 0, 3),
-//       date.local(2011, 0, 1, 12, 0, 4)
-//     ]);
-//     test.end();
-//   });
 #[test]
 fn one_second_ticks() -> Result<()> {
     let scale = {
-        let d0 = NaiveDateTime::parse_from_str("2011-01-01T12:00:00", RFC_3339_FMT).unwrap();
-        let d1 = NaiveDateTime::parse_from_str("2011-01-01T12:00:04", RFC_3339_FMT).unwrap();
+        let d0 = NaiveDateTime::parse_from_str("2011-01-01T12:00:00", RFC_3339_FMT)?;
+        let d1 = NaiveDateTime::parse_from_str("2011-01-01T12:00:04", RFC_3339_FMT)?;
         ScaleTime::new().domain(d0..d1)?
     };
 
-    // let ticks = scale.ticks(4);
+    let ticks = scale.ticks(Some(4));
 
-    unimplemented!();
+    assert_eq!(NaiveDateTime::parse_from_str("2011-01-01T12:00:00", RFC_3339_FMT)?, ticks[0]);
+    assert_eq!(NaiveDateTime::parse_from_str("2011-01-01T12:00:01", RFC_3339_FMT)?, ticks[1]);
+    assert_eq!(NaiveDateTime::parse_from_str("2011-01-01T12:00:02", RFC_3339_FMT)?, ticks[2]);
+    assert_eq!(NaiveDateTime::parse_from_str("2011-01-01T12:00:03", RFC_3339_FMT)?, ticks[3]);
+    assert_eq!(NaiveDateTime::parse_from_str("2011-01-01T12:00:04", RFC_3339_FMT)?, ticks[4]);
+
+    Ok(())
 }

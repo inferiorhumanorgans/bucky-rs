@@ -34,7 +34,7 @@ impl TickIncrement<Range<NaiveDateTime>, TickDuration> for Range<NaiveDateTime> 
         let search_result = intervals.binary_search(&td_duration);
 
         let i: usize = match search_result {
-            Ok(n) => n + 1,
+            Ok(n) => n,
             Err(n) => n,
         };
 

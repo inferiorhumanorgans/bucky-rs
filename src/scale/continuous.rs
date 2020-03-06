@@ -26,5 +26,5 @@ where
         DomainIntermediateType: Into<DomainType>,
         RangeType: Copy,;
 
-    fn ticks(&self, count: Option<i32>) -> Vec<f64>;
+    fn ticks(&self, count: Option<i32>) -> Vec<DomainType>;
 }
