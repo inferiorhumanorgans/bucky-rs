@@ -106,7 +106,7 @@ where
         // TODO: Find a more graceful way to do this
         let power = (step.ln() / LN_10).floor();
         if power != (power as i32) as f64 {
-            panic!("Couldn't convert power to i32")
+            panic!("Couldn't convert power ({:?}) to i32", power);
         };
         let power = power as i32;
 

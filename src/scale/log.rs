@@ -188,10 +188,23 @@ where
     /// count, then at most one tick per power is returned. Otherwise, the tick
     /// values are unfiltered.  If count is not specified, it defaults to 10.
     fn ticks(&self, tick_count: Option<i32>) -> Vec<f64> {
-        assert!(self.domain.end > self.domain.start);
+        let domain = if self.domain.end < self.domain.start {
+            self.domain.end..self.domain.start
+        } else {
+            self.domain.start..self.domain.end
+        };
 
-        let i = self.domain.start.log(self.base);
-        let j = self.domain.end.log(self.base);
+        let (log_d0, log_d1) = if domain.start < 0.0 {
+            (
+                -((-domain.start).log(self.base)),
+                -((-domain.end).log(self.base)),
+            )
+        } else {
+            (
+                domain.start.log(self.base),
+                domain.end.log(self.base),
+            )
+        };
 
         let n = match tick_count {
             Some(n) => n,
@@ -202,34 +215,56 @@ where
 
         if self.base % 1.0 == 0.0 {
             let base = self.base.floor() as i32;
-            if (j - i) < n as f64 {
-                let i = i.floor() as i32;
-                let j = j.ceil() as i32;
-                if self.domain.start > 0.0 {
-                    for i in i..=j {
-                        let p = base.pow(i as u32);
+
+            if (log_d1 - log_d0) < n as f64 {
+                let log_d0 = log_d0.floor() as i32;
+                let log_d1 = log_d1.ceil() as i32;
+
+                if domain.start > 0.0 {
+                    for i in log_d0..=log_d1 {
+                        let p = self.base.powi(i);
                         for k in 1..base {
-                            let t = (p * k) as f64;
-                            if t < self.domain.start {
+                            let t = p * k as f64;
+                            if t < domain.start {
                                 continue;
                             }
-                            if t > self.domain.end {
+                            if t > domain.end {
                                 break;
                             }
                             z.push(t);
                         }
                     }
                 } else {
-                    unimplemented!()
+                    for i in log_d0..=log_d1 {
+                        let p = -(self.base.powi(-i as i32));
+                        for k in (1..=(base - 1)).rev() {
+                            let t = p * (k as f64);
+                            if t < domain.start {
+                                continue;
+                            }
+
+                            if t > domain.end {
+                                break;
+                            }
+
+                            z.push(t);
+                        }
+                    }
                 }
+
                 if (z.len() * 2) < n as usize {
-                    return self.domain.ticks(Some(n));
+                    z = domain.ticks(Some(n));
                 }
+
+                if domain.start == self.domain.end {
+                    z.reverse();
+                }
+
                 return z;
             }
         } else {
-            let tick_count = (j - i).min(n as f64).floor();
-            return (i..j)
+            let tick_count = (log_d1 - log_d0).min(n as f64).floor();
+            return (log_d0..log_d1)
                 .ticks(Some(tick_count as i32))
                 .iter()
                 .map(|n| self.base.powf(*n))
@@ -250,6 +285,11 @@ impl<'a> ScaleLog<f64, NumberInterpolator> {
             interpolator: NumberInterpolator::new(),
         }
     }
+}
+
+#[cfg(test)]
+fn round_12places(x: &f64) -> f64 {
+    return (x * 1e12).round() / 1e12
 }
 
 #[test]
@@ -373,8 +413,63 @@ fn base_changes_ticks_and_format_gives_strings() -> Result<()> {
 
 // tape("log.nice() nices the domain, extending it to powers of ten", function(test) {
 // tape("log.nice() on a polylog domain only affects the extent", function(test) {
-// tape("log.ticks() generates the expected power-of-ten for ascending ticks", function(test) {
-// tape("log.ticks() generates the expected power-of-ten ticks for descending domains", function(test) {
+
+#[test]
+fn ticks_generates_expected_power_of_ten_ascending() -> Result<()> {
+    let scale = ScaleLog::new();
+
+    {
+        let scale = scale.clone().domain(1e-1..1e1)?;
+        let generated_ticks : Vec<_> = scale.ticks(None).iter().map(round_12places).collect();
+        let expected_ticks = &[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0];
+        assert_eq!(expected_ticks, generated_ticks.as_slice());
+    }
+
+    {
+        let scale = scale.clone().domain(1e-1..1e0)?;
+        let generated_ticks : Vec<_> = scale.ticks(None).iter().map(round_12places).collect();
+        let expected_ticks = &[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0];
+        assert_eq!(expected_ticks, generated_ticks.as_slice());
+    }
+
+    {
+        let scale = scale.clone().domain(-1e0..-1e-1)?;
+        let generated_ticks : Vec<_> = scale.ticks(None).iter().map(round_12places).collect();
+        let expected_ticks = &[-1.0, -0.9, -0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1];
+        assert_eq!(expected_ticks, generated_ticks.as_slice());
+    }
+
+    Ok(())
+}
+
+#[test]
+fn ticks_generates_expected_power_of_ten_descending() -> Result<()> {
+    let scale = ScaleLog::new();
+
+    {
+        let scale = scale.clone().domain(-1e-1..-1e1)?;
+        let generated_ticks : Vec<_> = scale.ticks(None).iter().map(round_12places).collect();
+        let expected_ticks = &[-0.1, -0.2, -0.3, -0.4, -0.5, -0.6, -0.7, -0.8, -0.9, -1.0, -2.0, -3.0, -4.0, -5.0, -6.0, -7.0, -8.0, -9.0, -10.0];
+        assert_eq!(expected_ticks, generated_ticks.as_slice());
+    }
+
+    {
+        let scale = scale.clone().domain(-1e-1..-1e0)?;
+        let generated_ticks : Vec<_> = scale.ticks(None).iter().map(round_12places).collect();
+        let expected_ticks = &[-0.1, -0.2, -0.3, -0.4, -0.5, -0.6, -0.7, -0.8, -0.9, -1.0];
+        assert_eq!(expected_ticks, generated_ticks.as_slice());
+    }
+
+    {
+        let scale = scale.clone().domain(1e0..1e-1)?;
+        let generated_ticks : Vec<_> = scale.ticks(None).iter().map(round_12places).collect();
+        let expected_ticks = &[1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1];
+        assert_eq!(expected_ticks, generated_ticks.as_slice());
+    }
+
+    Ok(())
+}
+
 // tape("log.ticks() generates the expected power-of-ten ticks for small domains", function(test) {
 // tape("log.ticks() generates linear ticks when the domain extent is small", function(test) {
 // tape("log.base(base).ticks() generates the expected power-of-base ticks", function(test) {
