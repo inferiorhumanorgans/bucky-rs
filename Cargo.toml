@@ -25,9 +25,13 @@ quick-xml = { version = "0.17.2", optional = true }
 chrono = { version = "0.4", features = [ "serde" ], optional = true }
 date-iterator = { path = "./date-iterator", optional = true }
 
-pathfinder_canvas = { git = "https://github.com/servo/pathfinder/", rev = "12574101e55772627888ebc5ad63aa318874161f" }
-pathfinder_geometry = { git = "https://github.com/servo/pathfinder/", rev = "12574101e55772627888ebc5ad63aa318874161f" }
-pathfinder_content = { git = "https://github.com/servo/pathfinder/", rev = "12574101e55772627888ebc5ad63aa318874161f" }
+pathfinder_canvas = { git = "https://github.com/inferiorhumanorgans/pathfinder/", branch = "iho/path-debug-test" }
+pathfinder_geometry = { git = "https://github.com/inferiorhumanorgans/pathfinder/", branch = "iho/path-debug-test" }
+pathfinder_content = { git = "https://github.com/inferiorhumanorgans/pathfinder/", branch = "iho/path-debug-test" }
+
+# pathfinder_canvas = { path = "/Users/alex/pathfinder/canvas" }
+# pathfinder_geometry = { path = "/Users/alex/pathfinder/geometry" }
+# pathfinder_content = { path = "/Users/alex/pathfinder/content" }
 
 [dev-dependencies]
 csv = "1.1"

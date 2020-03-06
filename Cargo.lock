@@ -396,7 +396,7 @@ dependencies = [
 [[package]]
 name = "pathfinder_canvas"
 version = "0.1.0"
-source = "git+https://github.com/servo/pathfinder/?rev=12574101e55772627888ebc5ad63aa318874161f#12574101e55772627888ebc5ad63aa318874161f"
+source = "git+https://github.com/inferiorhumanorgans/pathfinder/?branch=iho/path-debug-test#63acb0046d06b45b1be3e33a3af7bcb934427ecc"
 dependencies = [
  "pathfinder_color",
  "pathfinder_content",
@@ -407,7 +407,7 @@ dependencies = [
 [[package]]
 name = "pathfinder_color"
 version = "0.1.0"
-source = "git+https://github.com/servo/pathfinder/?rev=12574101e55772627888ebc5ad63aa318874161f#12574101e55772627888ebc5ad63aa318874161f"
+source = "git+https://github.com/inferiorhumanorgans/pathfinder/?branch=iho/path-debug-test#63acb0046d06b45b1be3e33a3af7bcb934427ecc"
 dependencies = [
  "pathfinder_simd",
 ]
@@ -415,7 +415,7 @@ dependencies = [
 [[package]]
 name = "pathfinder_content"
 version = "0.1.0"
-source = "git+https://github.com/servo/pathfinder/?rev=12574101e55772627888ebc5ad63aa318874161f#12574101e55772627888ebc5ad63aa318874161f"
+source = "git+https://github.com/inferiorhumanorgans/pathfinder/?branch=iho/path-debug-test#63acb0046d06b45b1be3e33a3af7bcb934427ecc"
 dependencies = [
  "arrayvec",
  "bitflags",
@@ -430,7 +430,7 @@ dependencies = [
 [[package]]
 name = "pathfinder_geometry"
 version = "0.4.0"
-source = "git+https://github.com/servo/pathfinder/?rev=12574101e55772627888ebc5ad63aa318874161f#12574101e55772627888ebc5ad63aa318874161f"
+source = "git+https://github.com/inferiorhumanorgans/pathfinder/?branch=iho/path-debug-test#63acb0046d06b45b1be3e33a3af7bcb934427ecc"
 dependencies = [
  "log",
  "pathfinder_simd",
@@ -439,7 +439,7 @@ dependencies = [
 [[package]]
 name = "pathfinder_gpu"
 version = "0.1.0"
-source = "git+https://github.com/servo/pathfinder/?rev=12574101e55772627888ebc5ad63aa318874161f#12574101e55772627888ebc5ad63aa318874161f"
+source = "git+https://github.com/inferiorhumanorgans/pathfinder/?branch=iho/path-debug-test#63acb0046d06b45b1be3e33a3af7bcb934427ecc"
 dependencies = [
  "bitflags",
  "half",
@@ -453,7 +453,7 @@ dependencies = [
 [[package]]
 name = "pathfinder_renderer"
 version = "0.1.0"
-source = "git+https://github.com/servo/pathfinder/?rev=12574101e55772627888ebc5ad63aa318874161f#12574101e55772627888ebc5ad63aa318874161f"
+source = "git+https://github.com/inferiorhumanorgans/pathfinder/?branch=iho/path-debug-test#63acb0046d06b45b1be3e33a3af7bcb934427ecc"
 dependencies = [
  "bitflags",
  "byteorder",
@@ -476,12 +476,12 @@ dependencies = [
 [[package]]
 name = "pathfinder_resources"
 version = "0.1.0"
-source = "git+https://github.com/servo/pathfinder/?rev=12574101e55772627888ebc5ad63aa318874161f#12574101e55772627888ebc5ad63aa318874161f"
+source = "git+https://github.com/inferiorhumanorgans/pathfinder/?branch=iho/path-debug-test#63acb0046d06b45b1be3e33a3af7bcb934427ecc"
 
 [[package]]
 name = "pathfinder_simd"
 version = "0.4.0"
-source = "git+https://github.com/servo/pathfinder/?rev=12574101e55772627888ebc5ad63aa318874161f#12574101e55772627888ebc5ad63aa318874161f"
+source = "git+https://github.com/inferiorhumanorgans/pathfinder/?branch=iho/path-debug-test#63acb0046d06b45b1be3e33a3af7bcb934427ecc"
 dependencies = [
  "rustc_version",
 ]
@@ -489,7 +489,7 @@ dependencies = [
 [[package]]
 name = "pathfinder_ui"
 version = "0.1.0"
-source = "git+https://github.com/servo/pathfinder/?rev=12574101e55772627888ebc5ad63aa318874161f#12574101e55772627888ebc5ad63aa318874161f"
+source = "git+https://github.com/inferiorhumanorgans/pathfinder/?branch=iho/path-debug-test#63acb0046d06b45b1be3e33a3af7bcb934427ecc"
 dependencies = [
  "hashbrown",
  "pathfinder_color",
