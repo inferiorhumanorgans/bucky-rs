@@ -11,3 +11,5 @@ A typical workflow could involve: a bit of rust to generate the SVG document fol
 
 ### TODO
 * There are currently copies of [date-iterator](https://github.com/kosta/date-iterator) and [minidom-rs](https://gitlab.com/xmpp-rs/minidom-rs) in tree.  Changes should be merged upstream.
+* Additional tests
+* Work down the TODO comments
