@@ -12,7 +12,7 @@ use crate::{assert_delta, test::DELTA};
 /// transform is applied to the input domain value before the output range
 /// value is computed. The mapping to the range value y can be expressed as
 /// a function of the domain value x: y = m log(x) + b.
-/// 
+///
 /// As log(0) = -∞, a log scale domain must be strictly-positive or strictly-
 /// negative; the domain must not include or cross zero. A log scale with a
 /// positive domain has a well-defined behavior for positive values, and a log
@@ -20,7 +20,7 @@ use crate::{assert_delta, test::DELTA};
 /// values. For a negative domain, input and output values are implicitly
 /// multiplied by -1. The behavior of the scale is undefined if you pass a
 /// negative value to a log scale with a positive domain or vice versa.
-/// 
+///
 /// TODO: Handle negative scales.
 #[derive(Clone, Debug)]
 pub struct ScaleLog<RangeType, InterpolatorType> {
@@ -33,13 +33,16 @@ pub struct ScaleLog<RangeType, InterpolatorType> {
 
 impl<'a, RangeType, InterpolatorType> ScaleLog<RangeType, InterpolatorType>
 where
-    InterpolatorType: RangeInterpolator<'a, RangeType>
+    InterpolatorType: RangeInterpolator<'a, RangeType>,
 {
-    pub fn interpolator<NewInterpolator>(self, interpolator: NewInterpolator) -> ScaleLog<RangeType, NewInterpolator>
+    pub fn interpolator<NewInterpolator>(
+        self,
+        interpolator: NewInterpolator,
+    ) -> ScaleLog<RangeType, NewInterpolator>
     where
-        NewInterpolator: RangeInterpolator<'a, RangeType>
+        NewInterpolator: RangeInterpolator<'a, RangeType>,
     {
-        let ret : ScaleLog<RangeType, NewInterpolator> = ScaleLog {
+        let ret: ScaleLog<RangeType, NewInterpolator> = ScaleLog {
             interpolator,
             domain: self.domain,
             range: self.range,
@@ -50,10 +53,7 @@ where
     }
 
     pub fn base(self, base: f64) -> Self {
-        Self {
-            base,
-            ..self
-        }
+        Self { base, ..self }
     }
 
     /// Like LinearScale#tick_format, but customized for a log scale. The specified
@@ -61,9 +61,9 @@ where
     /// the tick values. If there are too many ticks, the formatter may return
     /// the empty string for some of the tick labels; however, note that the
     /// ticks are still shown.
-    /// 
+    ///
     /// TODO: To disable filtering, specify a count of Infinity.
-    /// 
+    ///
     /// TODO: When specifying a count, you may also provide a format specifier
     /// or format function. For example, to get a tick formatter that will
     /// display 20 ticks of a currency, say log.tickFormat(20, "$,f"). If the
@@ -83,7 +83,7 @@ where
         let k = 1_f64.max(self.base * count as f64 / self.ticks(None).len() as f64);
 
         move |d| {
-            let mut i = d / base.powf( d.log(base).round());
+            let mut i = d / base.powf(d.log(base).round());
             if i * base < base - 0.5 {
                 i *= base;
             }
@@ -100,7 +100,8 @@ where
     }
 }
 
-impl<'a, RangeType, DefaultInterpolator> ScaleContinuous<'a, f64, RangeType> for ScaleLog<RangeType, DefaultInterpolator>
+impl<'a, RangeType, DefaultInterpolator> ScaleContinuous<'a, f64, RangeType>
+    for ScaleLog<RangeType, DefaultInterpolator>
 where
     DefaultInterpolator: RangeInterpolator<'a, RangeType>,
 {
@@ -110,14 +111,11 @@ where
     {
         let domain = domain.start.into()..domain.end.into();
 
-       if !((domain.end < 0.0 && domain.start < 0.0) || (domain.end > 0.0 && domain.start > 0.0)) {
+        if !((domain.end < 0.0 && domain.start < 0.0) || (domain.end > 0.0 && domain.start > 0.0)) {
             return Err(ScaleError::DegenerateDomain);
         }
 
-        Ok(Self {
-            domain,
-            ..self
-        })
+        Ok(Self { domain, ..self })
     }
 
     fn range<RangeIntermediateType>(self, range: Range<RangeIntermediateType>) -> Result<Self>
@@ -130,8 +128,7 @@ where
         })
     }
 
-    fn clamped(self, clamped: bool) -> Self
-    {
+    fn clamped(self, clamped: bool) -> Self {
         Self { clamped, ..self }
     }
 
@@ -201,7 +198,7 @@ where
             None => 10,
         };
 
-        let mut z : Vec<f64> = vec![];
+        let mut z: Vec<f64> = vec![];
 
         if self.base % 1.0 == 0.0 {
             let base = self.base.floor() as i32;
@@ -232,7 +229,11 @@ where
             }
         } else {
             let tick_count = (j - i).min(n as f64).floor();
-            return (i..j).ticks(Some(tick_count as i32)).iter().map(|n| self.base.powf(*n)).collect();
+            return (i..j)
+                .ticks(Some(tick_count as i32))
+                .iter()
+                .map(|n| self.base.powf(*n))
+                .collect();
         }
 
         unimplemented!();
@@ -273,15 +274,14 @@ fn log_scale_does_not_clamp_by_default() -> Result<()> {
 
     assert_eq!(false, scale.clamped);
     assert_delta!(-0.3010299, scale.scale(0.5), DELTA);
-    assert_delta!( 1.1760913, scale.scale(15), DELTA);
+    assert_delta!(1.1760913, scale.scale(15), DELTA);
 
     Ok(())
 }
 
 #[test]
 fn log_scale_clamp_true_clamps_to_the_domain() -> Result<()> {
-    let scale = ScaleLog::new()
-        .clamped(true);
+    let scale = ScaleLog::new().clamped(true);
 
     assert_delta!(0.0, scale.scale(-1.0), DELTA);
     assert_delta!(0.69897, scale.scale(5), DELTA);
@@ -298,31 +298,40 @@ fn log_scale_clamp_true_clamps_to_the_domain() -> Result<()> {
 
 #[test]
 fn x_is_mapped_to_y() -> Result<()> {
-    let scale = ScaleLog::new()
-        .domain(1..2)?;
+    let scale = ScaleLog::new().domain(1..2)?;
 
     assert_delta!(-1.0000000, scale.scale(0.5), DELTA);
-    assert_delta!( 0.0000000, scale.scale(1.0), DELTA);
-    assert_delta!( 0.5849625, scale.scale(1.5), DELTA);
-    assert_delta!( 1.0000000, scale.scale(2.0), DELTA);
-    assert_delta!( 1.3219281, scale.scale(2.5), DELTA);
+    assert_delta!(0.0000000, scale.scale(1.0), DELTA);
+    assert_delta!(0.5849625, scale.scale(1.5), DELTA);
+    assert_delta!(1.0000000, scale.scale(2.0), DELTA);
+    assert_delta!(1.3219281, scale.scale(2.5), DELTA);
 
     Ok(())
 }
 
 #[test]
 fn base_changes_ticks() -> Result<()> {
-    let scale = ScaleLog::new()
-        .domain(1..32)?;
+    let scale = ScaleLog::new().domain(1..32)?;
 
     {
         let scale = scale.clone().base(2.0);
-        assert_eq!(&[1.0, 2.0, 4.0, 8.0, 16.0, 32.0], scale.ticks(None).as_slice());
+        assert_eq!(
+            &[1.0, 2.0, 4.0, 8.0, 16.0, 32.0],
+            scale.ticks(None).as_slice()
+        );
     }
 
     {
         let scale = scale.clone().base(std::f64::consts::E);
-        assert_eq!(&[1.0, 2.718281828459045, 7.3890560989306495, 20.085536923187664], scale.ticks(None).as_slice());
+        assert_eq!(
+            &[
+                1.0,
+                2.718281828459045,
+                7.3890560989306495,
+                20.085536923187664
+            ],
+            scale.ticks(None).as_slice()
+        );
     }
 
     Ok(())
@@ -330,20 +339,32 @@ fn base_changes_ticks() -> Result<()> {
 
 #[test]
 fn base_changes_ticks_and_format_gives_strings() -> Result<()> {
-    let scale = ScaleLog::new()
-        .domain(1..32)?;
+    let scale = ScaleLog::new().domain(1..32)?;
 
     {
         let scale = scale.clone().base(2.0);
         let expected_ticks = &["1", "2", "4", "8", "16", "32"];
-        let ticks : Vec<_> = scale.ticks(None).iter().map(scale.tick_format(None)).collect();
+        let ticks: Vec<_> = scale
+            .ticks(None)
+            .iter()
+            .map(scale.tick_format(None))
+            .collect();
         assert_eq!(expected_ticks, ticks.as_slice());
     }
 
     {
         let scale = scale.clone().base(std::f64::consts::E);
-        let expected_ticks = &["1", "2.718281828459045", "7.3890560989306495", "20.085536923187664"];
-        let ticks : Vec<_> = scale.ticks(None).iter().map(scale.tick_format(None)).collect();
+        let expected_ticks = &[
+            "1",
+            "2.718281828459045",
+            "7.3890560989306495",
+            "20.085536923187664",
+        ];
+        let ticks: Vec<_> = scale
+            .ticks(None)
+            .iter()
+            .map(scale.tick_format(None))
+            .collect();
         assert_eq!(expected_ticks, ticks.as_slice());
     }
 

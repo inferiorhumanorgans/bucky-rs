@@ -1,8 +1,10 @@
 mod number;
 pub use number::*;
 
-#[cfg(feature = "color")] mod hsl;
-#[cfg(feature = "color")] pub use hsl::*;
+#[cfg(feature = "color")]
+mod hsl;
+#[cfg(feature = "color")]
+pub use hsl::*;
 
 // mod piecewise;
 // pub use piecewise::*;

@@ -6,8 +6,7 @@ use crate::{assert_delta, test::DELTA};
 use super::RangeInterpolator;
 
 #[derive(Clone, Debug)]
-pub struct RoundInterpolator {
-}
+pub struct RoundInterpolator {}
 
 impl<'a> RangeInterpolator<'a, f64> for RoundInterpolator {
     fn new() -> Self {

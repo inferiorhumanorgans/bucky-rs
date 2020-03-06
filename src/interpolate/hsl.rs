@@ -3,8 +3,7 @@ use crate::color::*;
 use std::ops::Range;
 
 #[derive(Clone, Debug)]
-pub struct HslInterpolator {
-}
+pub struct HslInterpolator {}
 
 impl<'a> RangeInterpolator<'a, Hsl> for HslInterpolator {
     fn new() -> Self {

@@ -1,10 +1,14 @@
 mod number;
-#[cfg(feature = "time")] mod time_duration;
-#[cfg(feature = "time")] mod time;
+#[cfg(feature = "time")]
+mod time;
+#[cfg(feature = "time")]
+mod time_duration;
 
 pub use number::*;
-#[cfg(feature = "time")] pub use time_duration::*;
-#[cfg(feature = "time")] pub use time::*;
+#[cfg(feature = "time")]
+pub use time::*;
+#[cfg(feature = "time")]
+pub use time_duration::*;
 
 pub trait Ticks {
     fn ticks(&self, count: Option<i32>) -> Vec<f64>;

@@ -2,11 +2,10 @@
 
 use std::marker::PhantomData;
 
-use crate::shape::curve::{ CurveGenerator, CurveLinear };
+use crate::shape::curve::{CurveGenerator, CurveLinear};
 
 /// `Line` is a Cartesian line generator.
-pub struct Line<'a, SourceType>
-{
+pub struct Line<'a, SourceType> {
     pub curve: Box<dyn CurveGenerator>,
     x: Box<dyn FnMut(&SourceType, usize) -> f64 + 'a>,
     y: Box<dyn FnMut(&SourceType, usize) -> f64 + 'a>,
@@ -14,8 +13,7 @@ pub struct Line<'a, SourceType>
     phantom: PhantomData<SourceType>,
 }
 
-impl<'a, SourceType> Line<'a, SourceType>
-{
+impl<'a, SourceType> Line<'a, SourceType> {
     /// Constructs a new line generator.
     pub fn new() -> Self {
         Self {
@@ -29,10 +27,7 @@ impl<'a, SourceType> Line<'a, SourceType>
 
     /// Sets the curve factory used by the the line generator.
     pub fn curve(self, curve: Box<dyn CurveGenerator>) -> Self {
-        Self {
-            curve,
-            ..self
-        }
+        Self { curve, ..self }
     }
 
     // TODO: Create a set of closures that take objects that implement a trait to
@@ -45,10 +40,7 @@ impl<'a, SourceType> Line<'a, SourceType>
     /// SourceType) and the index.  The default accessor calls the
     /// `unimplemented!` macro resulting in a panic.
     pub fn x(self, x: Box<dyn FnMut(&SourceType, usize) -> f64 + 'a>) -> Self {
-        Self {
-            x,
-            ..self
-        }
+        Self { x, ..self }
     }
 
     /// Sets the `y` accessor to the specified closure and returns line generator.
@@ -58,10 +50,7 @@ impl<'a, SourceType> Line<'a, SourceType>
     /// SourceType) and the index.  The default accessor calls the
     /// `unimplemented!` macro resulting in a panic.
     pub fn y(self, y: Box<dyn FnMut(&SourceType, usize) -> f64 + 'a>) -> Self {
-        Self {
-            y,
-            ..self
-        }
+        Self { y, ..self }
     }
 
     /// Sets the `defined` accessor to the specified closure and returns the
@@ -78,10 +67,7 @@ impl<'a, SourceType> Line<'a, SourceType>
     /// will be generated for the next defined point. As a result, the generated
     /// line may have several discrete segments
     pub fn defined(self, defined: Box<dyn FnMut(&SourceType, usize) -> bool + 'a>) -> Self {
-        Self {
-            defined,
-            ..self
-        }
+        Self { defined, ..self }
     }
 
     pub fn generate(&mut self, data: &[SourceType]) -> String {

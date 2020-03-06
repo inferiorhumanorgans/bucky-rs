@@ -1,8 +1,7 @@
 use thiserror::Error;
 
 #[derive(Debug, Error)]
-pub enum ScaleError
-{
+pub enum ScaleError {
     #[error("domain must not include 0")]
     DegenerateDomain,
 

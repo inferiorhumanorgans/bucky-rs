@@ -7,7 +7,7 @@
 use pathfinder_canvas::Path2D;
 use pathfinder_geometry::vector::Vector2F;
 
-use super::{ CurveContext, CurveGenerator };
+use super::{CurveContext, CurveGenerator};
 
 #[derive(Debug)]
 pub struct CurveStep {}
@@ -25,7 +25,7 @@ impl CurveGenerator for CurveStep {
             x: None,
             y: None,
             t: 0.5,
-            path: Path2D::new()
+            path: Path2D::new(),
         })
     }
 
@@ -54,20 +54,20 @@ impl CurveContext for CurveStepContext {
         match self.line_state {
             0 => {
                 self.line_state += 1;
-                self.path.move_to(Vector2F::new(x as f32, y as f32));    
-            },
+                self.path.move_to(Vector2F::new(x as f32, y as f32));
+            }
             _ => {
                 if self.line_state == 1 {
                     self.line_state += 1;
                 }
 
-                let x1 : f32 = (self.x.unwrap() * (1.0 - self.t) + x * self.t) as f32;
-                let y_previous : f32 = self.y.unwrap() as f32;
-                let y : f32 = y as f32;
+                let x1: f32 = (self.x.unwrap() * (1.0 - self.t) + x * self.t) as f32;
+                let y_previous: f32 = self.y.unwrap() as f32;
+                let y: f32 = y as f32;
 
                 self.path.line_to(Vector2F::new(x1, y_previous));
                 self.path.line_to(Vector2F::new(x1, y));
-            },
+            }
         }
 
         self.x = Some(x);
@@ -76,7 +76,10 @@ impl CurveContext for CurveStepContext {
 
     fn end_line(&mut self) {
         if 0.0 < self.t && self.t < 1.0 && self.line_state == 2 {
-            self.path.line_to(Vector2F::new(self.x.unwrap() as f32, self.y.unwrap() as f32));
+            self.path.line_to(Vector2F::new(
+                self.x.unwrap() as f32,
+                self.y.unwrap() as f32,
+            ));
         }
 
         if self.line_state == 1 {
@@ -92,25 +95,24 @@ impl CurveContext for CurveStepContext {
 #[test]
 fn expected_results() {
     use crate::shape::line::Line;
-    
+
     let mut line = Line::<(f64, f64)>::new()
         .x(Box::new(|datum, _i| datum.0))
         .y(Box::new(|datum, _i| datum.1))
         .curve(Box::new(CurveStep::new()));
 
     {
-        let data : &[(f64, f64)] = &[(0., 1.)];
+        let data: &[(f64, f64)] = &[(0., 1.)];
         assert_eq!("M 0 1 L 0 1 z", line.generate(data));
     }
 
     {
-        let data : &[(f64, f64)] = &[(0., 1.), (2., 3.)];
+        let data: &[(f64, f64)] = &[(0., 1.), (2., 3.)];
         assert_eq!("M 0 1 L 1 1 L 1 3 L 2 3", line.generate(data));
     }
 
     {
-        let data : &[(f64, f64)] = &[(0., 1.), (2., 3.), (4., 5.)];
+        let data: &[(f64, f64)] = &[(0., 1.), (2., 3.), (4., 5.)];
         assert_eq!("M 0 1 L 1 1 L 1 3 L 3 3 L 3 5 L 4 5", line.generate(data));
     }
-
 }

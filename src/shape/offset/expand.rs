@@ -1,8 +1,8 @@
 //! Applies a zero baseline and normalizes the values for each point such that
 //! the topline is always one.
 
-use crate::shape::stack::{StackIntermediateRow, StackRow};
 use crate::shape::offset::OffsetGenerator;
+use crate::shape::stack::{StackIntermediateRow, StackRow};
 
 #[derive(Debug)]
 pub struct OffsetExpand {}
@@ -30,7 +30,7 @@ impl OffsetGenerator for OffsetExpand {
                         } else {
                             value
                         }
-                    },
+                    }
                 };
 
                 let max = bounds[j];
@@ -46,7 +46,7 @@ impl OffsetGenerator for OffsetExpand {
 fn expands_to_fill_0_1_range() {
     use crate::shape::stack::StackIntermediateRow;
 
-    let series : StackIntermediateRow = vec![
+    let series: StackIntermediateRow = vec![
         vec![1.0, 2.0, 1.0],
         vec![4.0, 6.0, 3.0],
         vec![9.0, 8.0, 7.0],
@@ -54,10 +54,22 @@ fn expands_to_fill_0_1_range() {
 
     let stacked = (OffsetExpand {}).offset(series);
 
-    let expected : &[&[std::ops::Range<f64>]] = &[
-        &[0.0..(1.0/9.0), 0.0..(2.0/8.0), 0.0..(1.0/7.0)],
-        &[(1.0/9.0)..(4.0/9.0), (2.0/8.0)..(6.0/8.0), (1.0/7.0)..(3.0/7.0)],
-        &[(4.0/9.0)..(9.0/9.0), (6.0/8.0)..(8.0/8.0), (3.0/7.0)..(7.0/7.0)],
+    let expected: &[&[std::ops::Range<f64>]] = &[
+        &[
+            (0.0 / 9.0)..(1.0 / 9.0),
+            (0.0 / 8.0)..(2.0 / 8.0),
+            (0.0 / 7.0)..(1.0 / 7.0),
+        ],
+        &[
+            (1.0 / 9.0)..(4.0 / 9.0),
+            (2.0 / 8.0)..(6.0 / 8.0),
+            (1.0 / 7.0)..(3.0 / 7.0),
+        ],
+        &[
+            (4.0 / 9.0)..(9.0 / 9.0),
+            (6.0 / 8.0)..(8.0 / 8.0),
+            (3.0 / 7.0)..(7.0 / 7.0),
+        ],
     ];
 
     assert_eq!(expected[0], stacked[0].as_slice());
@@ -69,7 +81,7 @@ fn expands_to_fill_0_1_range() {
 fn treats_nan_as_zero() {
     use crate::shape::stack::StackIntermediateRow;
 
-    let series : StackIntermediateRow = vec![
+    let series: StackIntermediateRow = vec![
         vec![1.0, 2.0, 1.0],
         vec![4.0, std::f64::NAN, 3.0],
         vec![9.0, 4.0, 7.0],
@@ -77,10 +89,22 @@ fn treats_nan_as_zero() {
 
     let stacked = (OffsetExpand {}).offset(series);
 
-    let expected : &[&[std::ops::Range<f64>]] = &[
-        &[0.0..(1.0/9.0), 0.0..(2.0/4.0), 0.0..(1.0/7.0)],
-        &[(1.0/9.0)..(4.0/9.0), (2.0/4.0)..std::f64::NAN, (1.0/7.0)..(3.0/7.0)],
-        &[(4.0/9.0)..(9.0/9.0), (2.0/4.0)..(4.0/4.0), (3.0/7.0)..(7.0/7.0)],
+    let expected: &[&[std::ops::Range<f64>]] = &[
+        &[
+            (0.0 / 9.0)..(1.0 / 9.0),
+            (0.0 / 4.0)..(2.0 / 4.0),
+            (0.0 / 7.0)..(1.0 / 7.0),
+        ],
+        &[
+            (1.0 / 9.0)..(4.0 / 9.0),
+            (2.0 / 4.0)..std::f64::NAN,
+            (1.0 / 7.0)..(3.0 / 7.0),
+        ],
+        &[
+            (4.0 / 9.0)..(9.0 / 9.0),
+            (2.0 / 4.0)..(4.0 / 4.0),
+            (3.0 / 7.0)..(7.0 / 7.0),
+        ],
     ];
 
     assert_eq!(expected[0], stacked[0].as_slice());

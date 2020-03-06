@@ -1,9 +1,12 @@
 extern crate thiserror;
 
-#[cfg(feature = "time")] extern crate chrono;
-#[cfg(feature = "time")] extern crate date_iterator;
+#[cfg(feature = "time")]
+extern crate chrono;
+#[cfg(feature = "time")]
+extern crate date_iterator;
 
-#[cfg(feature = "dom-minidom")] extern crate minidom;
+#[cfg(feature = "dom-minidom")]
+extern crate minidom;
 
 /// Convenience structure to store a chart's margins
 #[derive(Debug)]
@@ -24,20 +27,28 @@ pub struct Chart {
 
 #[cfg(test)]
 mod test {
-    pub(crate) const DELTA : f64 = 1e-6;
+    pub(crate) const DELTA: f64 = 1e-6;
 
     #[macro_export]
     macro_rules! assert_delta {
         ( $lhs:expr, $rhs:expr, $delta:expr ) => {
-            assert!($lhs - $delta < $rhs && $rhs < $lhs + $delta, "{} is not between {} and {}", $rhs, $lhs - $delta, $lhs + $delta);
-        }
+            assert!(
+                $lhs - $delta < $rhs && $rhs < $lhs + $delta,
+                "{} is not between {} and {}",
+                $rhs,
+                $lhs - $delta,
+                $lhs + $delta
+            );
+        };
     }
 }
 
-#[cfg(feature = "dom-minidom")] pub mod annotated;
+#[cfg(feature = "dom-minidom")]
+pub mod annotated;
 pub mod array;
 pub mod axis;
-#[cfg(feature = "color")] pub mod color;
+#[cfg(feature = "color")]
+pub mod color;
 pub mod error;
 pub mod interpolate;
 pub mod scale;

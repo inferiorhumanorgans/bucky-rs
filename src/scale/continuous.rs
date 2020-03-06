@@ -24,7 +24,7 @@ where
     fn scale<DomainIntermediateType>(&'a self, t: DomainIntermediateType) -> RangeType
     where
         DomainIntermediateType: Into<DomainType>,
-        RangeType: Copy,;
+        RangeType: Copy;
 
     fn ticks(&self, count: Option<i32>) -> Vec<DomainType>;
 }

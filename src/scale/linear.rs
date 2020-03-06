@@ -1,7 +1,8 @@
 use std::ops::Range;
 
-use crate::array::ticks::{Ticks, TickIncrement};
-#[cfg(feature = "color")] use crate::color::Hsl;
+use crate::array::ticks::{TickIncrement, Ticks};
+#[cfg(feature = "color")]
+use crate::color::Hsl;
 use crate::error::{Result, ScaleError};
 use crate::interpolate::*;
 use crate::scale::continuous::*;
@@ -14,9 +15,10 @@ pub struct ScaleLinear<RangeType, InterpolatorType> {
     pub interpolator: InterpolatorType,
 }
 
-impl<'a, RangeType, InterpolatorType> ScaleContinuous<'a, f64, RangeType> for ScaleLinear<RangeType, InterpolatorType>
+impl<'a, RangeType, InterpolatorType> ScaleContinuous<'a, f64, RangeType>
+    for ScaleLinear<RangeType, InterpolatorType>
 where
-    InterpolatorType: RangeInterpolator<'a, RangeType>
+    InterpolatorType: RangeInterpolator<'a, RangeType>,
 {
     fn domain<DomainIntermediateType>(self, domain: Range<DomainIntermediateType>) -> Result<Self>
     where
@@ -42,8 +44,7 @@ where
         })
     }
 
-    fn clamped(self, clamped: bool) -> Self
-    {
+    fn clamped(self, clamped: bool) -> Self {
         Self { clamped, ..self }
     }
 
@@ -127,7 +128,7 @@ impl ScaleLinear<f64, NumberInterpolator> {
     }
 }
 
-#[cfg(feature = "color")] 
+#[cfg(feature = "color")]
 impl ScaleLinear<Hsl, HslInterpolator> {
     pub fn new() -> Self {
         Self {
@@ -149,7 +150,7 @@ impl ScaleLinear<Hsl, HslInterpolator> {
 
 #[test]
 fn defaults() -> Result<()> {
-    let scale = ScaleLinear::<f64,_>::new();
+    let scale = ScaleLinear::<f64, _>::new();
     assert_eq!(scale.scale(2.0), 2.0);
 
     Ok(())
@@ -168,21 +169,19 @@ fn clamped() -> Result<()> {
     const MIN: f64 = 0.0;
     const MAX: f64 = 1.0;
 
-    let scale = ScaleLinear::<f64, _>::new()
-        .domain(MIN..MAX)?
-        .clamped(true);
+    let scale = ScaleLinear::<f64, _>::new().domain(MIN..MAX)?.clamped(true);
 
     assert_eq!(scale.scale(MAX * 2.0), scale.scale(MAX));
 
     Ok(())
 }
 
-#[cfg(feature = "color")] 
+#[cfg(feature = "color")]
 #[test]
 fn color() -> Result<()> {
     use crate::color::Hsl;
 
-    let scale = ScaleLinear::<Hsl,_>::new();
+    let scale = ScaleLinear::<Hsl, _>::new();
 
     assert_eq!(
         scale.scale(1.0),
@@ -196,7 +195,7 @@ fn color() -> Result<()> {
     Ok(())
 }
 
-#[cfg(feature = "color")] 
+#[cfg(feature = "color")]
 #[test]
 fn color_clamped() -> Result<()> {
     use crate::color::Hsl;
@@ -204,18 +203,18 @@ fn color_clamped() -> Result<()> {
     const MIN: f64 = 0.0;
     const MAX: f64 = 1.0;
 
-    let scale = ScaleLinear::<Hsl,_>::new().domain(MIN..MAX)?.clamped(true);
+    let scale = ScaleLinear::<Hsl, _>::new().domain(MIN..MAX)?.clamped(true);
     assert_eq!(scale.scale(MAX * 2.5), scale.scale(MAX));
 
     Ok(())
 }
 
-#[cfg(feature = "color")] 
+#[cfg(feature = "color")]
 #[test]
 fn color_mid() -> Result<()> {
     use crate::color::Hsl;
 
-    let scale = ScaleLinear::<Hsl,_>::new();
+    let scale = ScaleLinear::<Hsl, _>::new();
 
     assert_eq!(
         scale.scale(0.330),

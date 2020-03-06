@@ -8,7 +8,7 @@
 use pathfinder_canvas::Path2D;
 use pathfinder_geometry::vector::Vector2F;
 
-use super::{ CurveContext, CurveGenerator };
+use super::{CurveContext, CurveGenerator};
 
 use std::f64::NAN;
 
@@ -53,18 +53,17 @@ impl CurveBasisContext {
         self.path.bezier_curve_to(
             Vector2F::new(
                 ((2.0 * self.x0 + self.x1) / 3.0) as f32,
-                ((2.0 * self.y0 + self.y1) / 3.0) as f32
+                ((2.0 * self.y0 + self.y1) / 3.0) as f32,
             ),
             Vector2F::new(
                 ((self.x0 + 2.0 * self.x1) / 3.0) as f32,
-                ((self.y0 + 2.0 * self.y1) / 3.0) as f32
+                ((self.y0 + 2.0 * self.y1) / 3.0) as f32,
             ),
             Vector2F::new(
                 ((self.x0 + 4.0 * self.x1 + x) / 6.0) as f32,
-                ((self.y0 + 4.0 * self.y1 + y) / 6.0) as f32
-            )
-          );
-        
+                ((self.y0 + 4.0 * self.y1 + y) / 6.0) as f32,
+            ),
+        );
     }
 }
 
@@ -82,16 +81,17 @@ impl CurveContext for CurveBasisContext {
             0 => {
                 self.line_state += 1;
                 self.path.move_to(Vector2F::new(x as f32, y as f32));
-            },
+            }
             1 => self.line_state += 1,
             2 => {
                 self.line_state += 1;
                 self.path.line_to(Vector2F::new(
                     ((5.0 * self.x0 + self.x1) / 6.0) as f32,
-                    ((5.0 * self.y0 + self.y1) / 6.0) as f32),);
+                    ((5.0 * self.y0 + self.y1) / 6.0) as f32,
+                ));
                 self.basis_point(x, y);
             }
-            _ => self.basis_point(x, y)
+            _ => self.basis_point(x, y),
         }
         self.x0 = self.x1;
         self.x1 = x;
@@ -106,7 +106,8 @@ impl CurveContext for CurveBasisContext {
         }
 
         if self.line_state == 2 || self.line_state == 3 {
-            self.path.line_to(Vector2F::new(self.x1 as f32, self.y1 as f32));
+            self.path
+                .line_to(Vector2F::new(self.x1 as f32, self.y1 as f32));
         }
 
         if self.line_state == 1 {
@@ -123,7 +124,7 @@ impl CurveContext for CurveBasisContext {
 #[test]
 fn expected_results() {
     use crate::shape::line::Line;
-    
+
     let mut line = Line::<(f64, f64)>::new()
         .x(Box::new(|datum, _i| datum.0))
         .y(Box::new(|datum, _i| datum.1))
@@ -131,20 +132,19 @@ fn expected_results() {
 
     {
         // test.pathEqual(l([[0, 1]]), "M0,1Z");
-        let data : &[(f64, f64)] = &[(0., 1.)];
+        let data: &[(f64, f64)] = &[(0., 1.)];
         assert_eq!("M 0 1 L 0 1 z", line.generate(data));
     }
 
     {
         // test.pathEqual(l([[0, 1], [1, 3]]), "M0,1L1,3");
-        let data : &[(f64, f64)] = &[(0., 1.), (1., 3.)];
+        let data: &[(f64, f64)] = &[(0., 1.), (1., 3.)];
         assert_eq!("M 0 1 L 1 3", line.generate(data));
     }
 
     {
         // test.pathEqual(l([[0, 1], [1, 3], [2, 1]]), "M0,1L0.166667,1.333333C0.333333,1.666667,0.666667,2.333333,1,2.333333C1.333333,2.333333,1.666667,1.666667,1.833333,1.333333L2,1");
-        let data : &[(f64, f64)] = &[(0., 1.), (1., 3.), (2., 1.)];
+        let data: &[(f64, f64)] = &[(0., 1.), (1., 3.), (2., 1.)];
         assert_eq!("M 0 1 L 0.16666667 1.3333334 C 0.33333334 1.6666666 0.6666667 2.3333333 1 2.3333333 C 1.3333334 2.3333333 1.6666666 1.6666666 1.8333334 1.3333334 L 2 1", line.generate(data));
     }
-
 }

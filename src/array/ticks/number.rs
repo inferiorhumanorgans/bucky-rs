@@ -1,5 +1,5 @@
-use std::ops::Range;
 use std::convert::TryFrom;
+use std::ops::Range;
 
 use super::{TickIncrement, TickStep, Ticks};
 
@@ -95,7 +95,9 @@ where
         let start: f64 = self.start.into();
         let stop: f64 = self.end.into();
 
-        let step: f64 = (stop - start) / f64::try_from(std::cmp::max(0, count)).expect("Can't fit that many ticks into an f64");
+        let step: f64 = (stop - start)
+            / f64::try_from(std::cmp::max(0, count))
+                .expect("Can't fit that many ticks into an f64");
 
         if !step.is_finite() {
             return step;

@@ -3,7 +3,7 @@
 use pathfinder_canvas::Path2D;
 use pathfinder_geometry::vector::Vector2F;
 
-use super::{ CurveContext, CurveGenerator };
+use super::{CurveContext, CurveGenerator};
 
 #[derive(Debug)]
 pub struct CurveLinear {}
@@ -18,7 +18,7 @@ impl CurveGenerator for CurveLinear {
     fn context(&self) -> Box<dyn CurveContext> {
         Box::new(CurveLinearContext {
             line_state: 0,
-            path: Path2D::new()
+            path: Path2D::new(),
         })
     }
 
@@ -43,12 +43,12 @@ impl CurveContext for CurveLinearContext {
             0 => {
                 self.line_state += 1;
                 self.path.move_to(Vector2F::new(x as f32, y as f32));
-            },
+            }
             1 => {
                 self.line_state += 1;
                 self.path.line_to(Vector2F::new(x as f32, y as f32));
-            },
-            _ => self.path.line_to(Vector2F::new(x as f32, y as f32))
+            }
+            _ => self.path.line_to(Vector2F::new(x as f32, y as f32)),
         }
     }
 
@@ -67,7 +67,7 @@ impl CurveContext for CurveLinearContext {
 #[test]
 fn expected_results() {
     use crate::shape::line::Line;
-    
+
     let mut line = Line::<(f64, f64)>::new()
         .x(Box::new(|datum, _i| datum.0))
         .y(Box::new(|datum, _i| datum.1))
@@ -75,20 +75,19 @@ fn expected_results() {
 
     {
         // test.pathEqual(l([[0, 1]]), "M0,1Z");
-        let data : &[(f64, f64)] = &[(0., 1.)];
+        let data: &[(f64, f64)] = &[(0., 1.)];
         assert_eq!("M 0 1 L 0 1 z", line.generate(data));
     }
 
     {
         // test.pathEqual(l([[0, 1], [2, 3]]), "M0,1L2,3");
-        let data : &[(f64, f64)] = &[(0., 1.), (2., 3.)];
+        let data: &[(f64, f64)] = &[(0., 1.), (2., 3.)];
         assert_eq!("M 0 1 L 2 3", line.generate(data));
     }
 
     {
         // test.pathEqual(l([[0, 1], [2, 3], [4, 5]]), "M0,1L2,3L4,5");
-        let data : &[(f64, f64)] = &[(0., 1.), (2., 3.), (4., 5.)];
+        let data: &[(f64, f64)] = &[(0., 1.), (2., 3.), (4., 5.)];
         assert_eq!("M 0 1 L 2 3 L 4 5", line.generate(data));
     }
-
 }

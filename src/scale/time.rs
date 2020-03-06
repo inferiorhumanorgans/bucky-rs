@@ -2,8 +2,8 @@ use std::ops::Range;
 
 use crate::array::ticks::TickIncrement;
 use crate::error::{Result, ScaleError};
+use crate::interpolate::{NumberInterpolator, RangeInterpolator};
 use crate::scale::continuous::*;
-use crate::interpolate::{RangeInterpolator, NumberInterpolator};
 
 use date_iterator::{calendar_duration, CalendarDuration};
 
@@ -35,7 +35,8 @@ impl ScaleTime<f64, NumberInterpolator> {
     }
 }
 
-impl<'a, RangeType, InterpolatorType> ScaleContinuous<'a, NaiveDateTime, RangeType> for ScaleTime<RangeType, InterpolatorType>
+impl<'a, RangeType, InterpolatorType> ScaleContinuous<'a, NaiveDateTime, RangeType>
+    for ScaleTime<RangeType, InterpolatorType>
 where
     RangeType: std::fmt::Debug,
     InterpolatorType: RangeInterpolator<'a, RangeType>,
@@ -64,8 +65,7 @@ where
         })
     }
 
-    fn clamped(self, clamped: bool) -> Self
-    {
+    fn clamped(self, clamped: bool) -> Self {
         Self { clamped, ..self }
     }
 
@@ -119,12 +119,14 @@ where
 
         let interval = self.domain.tick_increment(tick_count);
 
-        (0..=tick_count).map(|i| {
-            use std::ops::Mul;
+        (0..=tick_count)
+            .map(|i| {
+                use std::ops::Mul;
 
-            let offset = CalendarDuration::from(&interval).mul(i);
-            calendar_duration::naive_add(&self.domain.start, &offset)
-        }).collect()
+                let offset = CalendarDuration::from(&interval).mul(i);
+                calendar_duration::naive_add(&self.domain.start, &offset)
+            })
+            .collect()
     }
 }
 
@@ -192,11 +194,26 @@ fn one_second_ticks() -> Result<()> {
 
     let ticks = scale.ticks(Some(4));
 
-    assert_eq!(NaiveDateTime::parse_from_str("2011-01-01T12:00:00", RFC_3339_FMT)?, ticks[0]);
-    assert_eq!(NaiveDateTime::parse_from_str("2011-01-01T12:00:01", RFC_3339_FMT)?, ticks[1]);
-    assert_eq!(NaiveDateTime::parse_from_str("2011-01-01T12:00:02", RFC_3339_FMT)?, ticks[2]);
-    assert_eq!(NaiveDateTime::parse_from_str("2011-01-01T12:00:03", RFC_3339_FMT)?, ticks[3]);
-    assert_eq!(NaiveDateTime::parse_from_str("2011-01-01T12:00:04", RFC_3339_FMT)?, ticks[4]);
+    assert_eq!(
+        NaiveDateTime::parse_from_str("2011-01-01T12:00:00", RFC_3339_FMT)?,
+        ticks[0]
+    );
+    assert_eq!(
+        NaiveDateTime::parse_from_str("2011-01-01T12:00:01", RFC_3339_FMT)?,
+        ticks[1]
+    );
+    assert_eq!(
+        NaiveDateTime::parse_from_str("2011-01-01T12:00:02", RFC_3339_FMT)?,
+        ticks[2]
+    );
+    assert_eq!(
+        NaiveDateTime::parse_from_str("2011-01-01T12:00:03", RFC_3339_FMT)?,
+        ticks[3]
+    );
+    assert_eq!(
+        NaiveDateTime::parse_from_str("2011-01-01T12:00:04", RFC_3339_FMT)?,
+        ticks[4]
+    );
 
     Ok(())
 }
