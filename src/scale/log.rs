@@ -470,19 +470,127 @@ fn ticks_generates_expected_power_of_ten_descending() -> Result<()> {
     Ok(())
 }
 
-// tape("log.ticks() generates the expected power-of-ten ticks for small domains", function(test) {
-// tape("log.ticks() generates linear ticks when the domain extent is small", function(test) {
-// tape("log.base(base).ticks() generates the expected power-of-base ticks", function(test) {
-// tape("log.tickFormat() is equivalent to log.tickFormat(10)", function(test) {
-// tape("log.tickFormat(count) returns a filtered \".0e\" format", function(test) {
-// tape("log.tickFormat(count, format) returns the specified format, filtered", function(test) {
-// tape("log.base(base).tickFormat() returns the \",\" format", function(test) {
-// tape("log.base(base).tickFormat(count) returns a filtered \",\" format", function(test) {
-// tape("log.ticks() generates log ticks", function(test) {
-// tape("log.tickFormat(count) filters ticks to about count", function(test) {
-// tape("log.ticks(count) filters powers-of-ten ticks for huge domains", function(test) {
-// tape("log.ticks() generates ticks that cover the domain", function(test) {
-// tape("log.ticks() generates ticks that cover the niced domain", function(test) {
+#[test]
+fn ticks_generates_expected_power_of_ten_small_domains() -> Result<()> {
+    let scale = ScaleLog::new();
+
+    {
+        let scale = scale.clone().domain(1..5)?;
+        let generated_ticks = scale.ticks(None);
+        let expected_ticks = &[1.0, 2.0, 3.0, 4.0, 5.0];
+        assert_eq!(expected_ticks, generated_ticks.as_slice());
+    }
+
+    {
+        let scale = scale.clone().domain(5..1)?;
+        let generated_ticks = scale.ticks(None);
+        let expected_ticks = &[5.0, 4.0, 3.0, 2.0, 1.0];
+        assert_eq!(expected_ticks, generated_ticks.as_slice());
+    }
+
+    {
+        let scale = scale.clone().domain(-1..-5)?;
+        let generated_ticks = scale.ticks(None);
+        let expected_ticks = &[-1.0, -2.0, -3.0, -4.0, -5.0];
+        assert_eq!(expected_ticks, generated_ticks.as_slice());
+    }
+
+    {
+        let scale = scale.clone().domain(-5..-1)?;
+        let generated_ticks = scale.ticks(None);
+        let expected_ticks = &[-5.0, -4.0, -3.0, -2.0, -1.0];
+        assert_eq!(expected_ticks, generated_ticks.as_slice());
+    }
+
+    {
+        let scale = scale.clone().domain(286.9252014..329.4978332)?;
+        let generated_ticks = scale.ticks(Some(1));
+        let expected_ticks = &[300.0];
+        assert_eq!(expected_ticks, generated_ticks.as_slice());
+    }
+
+    {
+        let scale = scale.clone().domain(286.9252014..329.4978332)?;
+        let generated_ticks = scale.ticks(Some(2));
+        let expected_ticks = &[300.0];
+        assert_eq!(expected_ticks, generated_ticks.as_slice());
+    }
+
+    {
+        let scale = scale.clone().domain(286.9252014..329.4978332)?;
+        let generated_ticks = scale.ticks(Some(3));
+        let expected_ticks = &[300.0, 320.0];
+        assert_eq!(expected_ticks, generated_ticks.as_slice());
+    }
+
+    {
+        let scale = scale.clone().domain(286.9252014..329.4978332)?;
+        let generated_ticks = scale.ticks(Some(4));
+        let expected_ticks = &[290.0, 300.0, 310.0, 320.0];
+        assert_eq!(expected_ticks, generated_ticks.as_slice());
+    }
+
+    {
+        let scale = scale.clone().domain(286.9252014..329.4978332)?;
+        let generated_ticks = scale.ticks(None);
+        let expected_ticks = &[290.0, 295.0, 300.0, 305.0, 310.0, 315.0, 320.0, 325.0];
+        assert_eq!(expected_ticks, generated_ticks.as_slice());
+    }
+
+    Ok(())
+}
+
+#[test]
+fn ticks_generates_linear_ticks_with_small_extent() -> Result<()> {
+    let scale = ScaleLog::new();
+
+    {
+        let scale = scale.clone().domain(41..42)?;
+        let generated_ticks = scale.ticks(None);
+        let expected_ticks = &[41.0, 41.1, 41.2, 41.3, 41.4, 41.5, 41.6, 41.7, 41.8, 41.9, 42.0];
+        assert_eq!(expected_ticks, generated_ticks.as_slice());
+    }
+
+    {
+        let scale = scale.clone().domain(42..41)?;
+        let generated_ticks = scale.ticks(None);
+        let expected_ticks = &[42.0, 41.9, 41.8, 41.7, 41.6, 41.5, 41.4, 41.3, 41.2, 41.1, 41.0];
+        assert_eq!(expected_ticks, generated_ticks.as_slice());
+    }
+
+    {
+        let scale = scale.clone().domain(1600..1400)?;
+        let generated_ticks = scale.ticks(None);
+        let expected_ticks = &[1600.0, 1580.0, 1560.0, 1540.0, 1520.0, 1500.0, 1480.0, 1460.0, 1440.0, 1420.0, 1400.0];
+        assert_eq!(expected_ticks, generated_ticks.as_slice());
+    }
+
+    Ok(())
+}
+
+#[test]
+fn ticks_generates_expected_power_of_base() -> Result<()> {
+    let scale = ScaleLog::new()
+        .base(std::f64::consts::E)
+        .domain(0.1..100.0)?;
+
+    let generated_ticks : Vec<_> = scale.ticks(None).iter().map(round_12places).collect();
+    let expected_ticks = &[0.135335283237, 0.367879441171, 1.0, 2.718281828459, 7.389056098931, 20.085536923188, 54.598150033144];
+    assert_eq!(expected_ticks, generated_ticks.as_slice());
+
+    Ok(())
+}
+
+// tape("log.tickFormat() is equivalent to log.tickFormat(10)", function(test)
+// tape("log.tickFormat(count) returns a filtered \".0e\" format", function(test)
+// tape("log.tickFormat(count, format) returns the specified format, filtered", function(test)
+// tape("log.base(base).tickFormat() returns the \",\" format", function(test)
+// tape("log.base(base).tickFormat(count) returns a filtered \",\" format", function(test)
+// tape("log.ticks() generates log ticks", function(test)
+// tape("log.tickFormat(count) filters ticks to about count", function(test)
+// tape("log.ticks(count) filters powers-of-ten ticks for huge domains", function(test)
+// tape("log.ticks() generates ticks that cover the domain", function(test)
+// tape("log.ticks() generates ticks that cover the niced domain", function(test)
 
 #[test]
 fn degenerate_domain_cannot_be_set() -> Result<()> {
