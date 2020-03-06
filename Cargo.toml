@@ -1,0 +1,40 @@
+[package]
+name = "bucky"
+version = "0.1.0"
+authors = [ "Alex Zepeda <rustgraphs@inferiorhumanorgans.com" ]
+edition = "2018"
+
+[lib]
+name = "bucky"
+path = "src/lib.rs"
+
+[features]
+default = [ "color", "dom-minidom", "time" ]
+color = [ ]
+dom-minidom = [ "minidom", "quick-xml" ]
+time = [ "chrono", "date-iterator" ]
+
+[dependencies]
+thiserror = "1.0"
+
+# dom-minidom deps
+minidom = { path = "./minidom-rs", optional = true }
+quick-xml = { version = "0.17.2", optional = true }
+
+# time deps
+chrono = { version = "0.4", features = [ "serde" ], optional = true }
+date-iterator = { path = "./date-iterator", optional = true }
+
+pathfinder_canvas = { git = "https://github.com/servo/pathfinder/", rev = "12574101e55772627888ebc5ad63aa318874161f" }
+pathfinder_geometry = { git = "https://github.com/servo/pathfinder/", rev = "12574101e55772627888ebc5ad63aa318874161f" }
+pathfinder_content = { git = "https://github.com/servo/pathfinder/", rev = "12574101e55772627888ebc5ad63aa318874161f" }
+
+[dev-dependencies]
+csv = "1.1"
+serde = { version = "1.0", features = [ "derive" ] }
+serde_json = "1.0"
+svg = "0.6"
+
+[[example]]
+name = "d3-histogram"
+required-features = [ "dom-minidom" ]
