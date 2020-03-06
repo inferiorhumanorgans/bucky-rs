@@ -1,6 +1,6 @@
 use std::ops::Range;
 
-use crate::array::ticks::TickIncrement;
+use crate::array::ticks::{TickDuration, TickIncrement};
 use crate::error::{Result, ScaleError};
 use crate::interpolate::{NumberInterpolator, RangeInterpolator};
 use crate::scale::continuous::*;
@@ -73,22 +73,21 @@ where
     where
         CountType: Into<i32>,
     {
-        assert!(
-            self.domain.end > self.domain.start,
-            "Reverse not supported yet"
-        );
-
         let count = match count {
             Some(count) => count.into(),
             None => 10,
         };
 
-        let increment = self.domain.tick_increment(count);
+        match self.domain.tick_increment(count) {
+            TickDuration::Milliseconds(0) |
+            TickDuration::Seconds(0) => Ok(self),
+            increment @ _ => {
+                let round_start = increment.floor(&self.domain.start);
+                let round_end = increment.ceil(&self.domain.end);
 
-        let round_start = increment.floor(&self.domain.start);
-        let round_end = increment.ceil(&self.domain.end);
-
-        self.domain(round_start..round_end)
+                self.domain(round_start..round_end)
+            }
+        }
     }
 
     fn scale<DomainIntermediateType>(&'a self, t: DomainIntermediateType) -> RangeType
@@ -180,6 +179,58 @@ fn nice_multi_year() -> Result<()> {
     let d1 = NaiveDateTime::parse_from_str("2140-01-01T00:00:00", RFC_3339_FMT).unwrap();
     assert_eq!(scale.domain.start, d0);
     assert_eq!(scale.domain.end, d1);
+
+    Ok(())
+}
+
+#[test]
+fn nice_works_on_empty_domain() -> Result<()> {
+    let d0 = NaiveDateTime::parse_from_str("2009-01-01T00:12:00", RFC_3339_FMT).unwrap();
+    let d1 = NaiveDateTime::parse_from_str("2009-01-01T00:12:00", RFC_3339_FMT).unwrap();
+
+    let scale = ScaleTime::new().domain(d0..d1)?.nice(None::<i32>)?;
+
+    assert_eq!(d0..d1, scale.domain);
+
+    Ok(())
+}
+
+#[test]
+fn nice_uses_the_specified_tick_count() -> Result<()> {
+    let scale = {
+        let d0 = NaiveDateTime::parse_from_str("2009-01-01T00:17:00", RFC_3339_FMT).unwrap();
+        let d1 = NaiveDateTime::parse_from_str("2009-01-01T23:42:00", RFC_3339_FMT).unwrap();
+
+        ScaleTime::new().domain(d0..d1)?
+    };
+
+    {
+        let d0 = NaiveDateTime::parse_from_str("2009-01-01T00:15:00", RFC_3339_FMT).unwrap();
+        let d1 = NaiveDateTime::parse_from_str("2009-01-01T23:45:00", RFC_3339_FMT).unwrap();
+        let domain = scale.clone().nice(Some(100))?.domain;
+
+        assert_eq!(d0..d1, domain);
+    }
+
+    {
+        let d0 = NaiveDateTime::parse_from_str("2009-01-01T00:00:00", RFC_3339_FMT).unwrap();
+        let d1 = NaiveDateTime::parse_from_str("2009-01-02T00:00:00", RFC_3339_FMT).unwrap();
+        let domain = scale.clone().nice(Some(10))?.domain;
+
+        assert_eq!(d0..d1, domain);
+    }
+
+    Ok(())
+}
+
+#[test]
+fn nice_empty_domains() -> Result<()> {
+    let scale = {
+        let d0 = NaiveDateTime::parse_from_str("2009-01-01T00:17:00", RFC_3339_FMT).unwrap();
+        let d1 = NaiveDateTime::parse_from_str("2009-01-01T23:42:00", RFC_3339_FMT).unwrap();
+
+        ScaleTime::new().domain(d0..d1)?
+    };
 
     Ok(())
 }

@@ -1,6 +1,7 @@
 use std::ops::Range;
 
 use chrono::{Duration, NaiveDateTime};
+use date_iterator::CalendarDuration;
 
 use crate::array::ticks::{TickDuration, TickIncrement, TickStep};
 
@@ -47,8 +48,11 @@ impl TickIncrement<Range<NaiveDateTime>, TickDuration> for Range<NaiveDateTime> 
             let tick_step = (0..years).tick_step(count);
 
             TickDuration::Years(tick_step as i32)
-        } else {
+        } else if i > 0 {
             intervals[i]
+        } else {
+            let seconds = CalendarDuration::from(&td_duration).duration_part().num_seconds();
+            TickDuration::Milliseconds(seconds * 1000)
         }
     }
 }

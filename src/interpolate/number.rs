@@ -5,6 +5,8 @@ use crate::{assert_delta, test::DELTA};
 
 use super::RangeInterpolator;
 
+/// This interpolator is similar to NumberInterpolator, except it will round the
+/// resulting value to the nearest integer.
 #[derive(Clone, Debug)]
 pub struct RoundInterpolator {}
 
@@ -18,6 +20,7 @@ impl<'a> RangeInterpolator<'a, f64> for RoundInterpolator {
     }
 }
 
+/// NumberInterpolator interpolates between two floating point (f64) values.
 #[derive(Clone, Debug)]
 pub struct NumberInterpolator {}
 

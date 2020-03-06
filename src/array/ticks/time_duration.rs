@@ -5,6 +5,7 @@ use date_iterator::{calendar_duration, CalendarDuration};
 
 #[derive(Copy, Clone, Debug)]
 pub enum TickDuration {
+    Milliseconds(i64),
     Seconds(i64),
     Minutes(i32),
     Hours(i32),
@@ -17,6 +18,7 @@ pub enum TickDuration {
 impl From<&TickDuration> for CalendarDuration {
     fn from(tick_duration: &TickDuration) -> CalendarDuration {
         match tick_duration {
+            TickDuration::Milliseconds(m) => CalendarDuration::milliseconds(*m),
             TickDuration::Seconds(s) => CalendarDuration::seconds(*s),
             TickDuration::Minutes(m) => CalendarDuration::minutes(*m as i64),
             TickDuration::Hours(h) => CalendarDuration::hours(*h as i64),
@@ -34,6 +36,11 @@ impl TickDuration {
         use std::ops::Sub;
 
         match self {
+            TickDuration::Milliseconds(m) => {
+                let remainder = date_time.timestamp_millis() as i64 % m;
+                let duration = Duration::milliseconds(remainder);
+                date_time.sub(duration).with_nanosecond(0).unwrap()
+            },
             TickDuration::Seconds(s) => {
                 let remainder = date_time.second() as i64 % s;
                 let duration = Duration::seconds(remainder);
@@ -403,6 +410,7 @@ fn tick_duration_ceil_10() {
 impl From<&TickDuration> for i64 {
     fn from(duration: &TickDuration) -> Self {
         match duration {
+            TickDuration::Milliseconds(s) => *s as i64 / 1000,
             TickDuration::Seconds(s) => *s as i64,
             TickDuration::Minutes(m) => *m as i64 * 60,
             TickDuration::Hours(h) => *h as i64 * 60 * 60,
