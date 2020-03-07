@@ -3,5 +3,5 @@ rust:
     - nightly
 cache: cargo
 script:
-  - cargo build
+  - cargo build --lib --tests --examples
   - cargo test
