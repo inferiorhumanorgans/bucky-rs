@@ -1,3 +1,5 @@
+#![feature(test)]
+
 extern crate thiserror;
 extern crate order_stat;
 
