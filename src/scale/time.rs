@@ -10,6 +10,10 @@ use date_iterator::{calendar_duration, CalendarDuration};
 
 const RFC_3339_FMT: &str = "%Y-%m-%dT%H:%M:%S";
 
+/// Time scales are a variant of [linear](crate::scale::ScaleLinear) scales that have a temporal domain:
+/// domain values are coerced to dates rather than numbers, and invert likewise
+/// returns a date. Time scales implement ticks based on calendar intervals,
+/// taking the pain out of generating axes for temporal domains.
 #[derive(Clone, Debug)]
 pub struct ScaleTime<RangeType, InterpolatorType> {
     pub domain: Range<NaiveDateTime>,

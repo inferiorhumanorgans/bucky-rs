@@ -1,3 +1,10 @@
+/// Quantile scales map a sampled input domain to a discrete range. The domain
+/// is considered continuous and thus the scale will accept any reasonable input
+/// value; however, the domain is specified as a discrete set of sample values.
+/// The number of values in (the cardinality of) the output range determines the
+/// number of quantiles that will be computed from the domain. To compute the
+/// quantiles, the domain is sorted, and treated as a population of discrete
+/// values.
 #[derive(Clone, Debug)]
 pub struct ScaleQuantile<'a, RangeType> {
     pub domain: Vec<f64>,

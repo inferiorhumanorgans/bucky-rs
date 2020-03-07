@@ -2,6 +2,10 @@ use crate::error::Result;
 
 use std::ops::Range;
 
+/// Continuous scales map a continuous, quantitative input domain to a
+/// continuous output range. If the range is also numeric, the mapping may be
+/// inverted. The ScaleContinuous trait is implemented by the: [linear](crate::scale::ScaleLinear), power,
+/// [log](crate::scale::ScaleLog), identity, radial, [time](crate::scale::ScaleTime) and sequential color scale structs.
 pub trait ScaleContinuous<'a, DomainType, RangeType>
 where
     Self: Sized,

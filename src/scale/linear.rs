@@ -7,6 +7,9 @@ use crate::error::{Result, ScaleError};
 use crate::interpolate::*;
 use crate::scale::continuous::*;
 
+/// Linear scales are a good default choice for continuous quantitative data
+/// because they preserve proportional differences. Each range value y can be
+/// expressed as a function of the domain value x: y = mx + b.
 #[derive(Clone, Debug)]
 pub struct ScaleLinear<RangeType, InterpolatorType> {
     pub domain: Range<f64>,

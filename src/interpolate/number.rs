@@ -2,8 +2,8 @@ use std::ops::Range;
 
 use super::RangeInterpolator;
 
-/// This interpolator is similar to NumberInterpolator, except it will round the
-/// resulting value to the nearest integer.
+/// RoundInterpolator is similar to [NumberInterpolator](NumberInterpolator), except it will round
+/// the resulting value to the nearest integer.
 #[derive(Clone, Debug)]
 pub struct RoundInterpolator {}
 

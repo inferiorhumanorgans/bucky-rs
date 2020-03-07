@@ -1,5 +1,9 @@
 use std::ops::Range;
 
+/// Band scales are like [ordinal](crate::scale::ScaleOrdinal) scales except the output range is continuous
+/// and numeric. Discrete output values are automatically computed by the scale
+/// by dividing the continuous range into uniform bands. Band scales are
+/// typically used for bar charts with an ordinal or categorical dimension.
 #[derive(Clone, Debug)]
 pub struct ScaleBand<'a, DomainType> {
     pub domain: &'a [DomainType],
@@ -37,6 +41,8 @@ where
         }
     }
 
+    /// A convenience method for setting the inner and outer padding to the same
+    /// padding value. If padding is not specified, returns the inner padding.
     pub fn padding(self, padding: f64) -> Self {
         let padding_inner = 1_f64.min(padding);
         let padding_outer = padding;
@@ -49,6 +55,10 @@ where
         .recalc()
     }
 
+    /// The inner padding specifies the proportion of the range that is reserved
+    /// for blank space between bands; a value of 0 means no blank space between
+    /// bands, and a value of 1 means a bandwidth of zero.  Inner padding must
+    /// be less than or equal to 1.
     pub fn padding_inner(self, padding: f64) -> Self {
         let padding_inner = 1_f64.min(padding);
 
@@ -59,6 +69,9 @@ where
         .recalc()
     }
 
+    /// The outer padding specifies the amount of blank space, in terms of
+    /// multiples of the step, to reserve before the first band and after the
+    /// last band. Outer padding is typically in the range [0, 1].
     pub fn padding_outer(self, padding: f64) -> Self {
         let padding_outer = padding;
 

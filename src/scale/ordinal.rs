@@ -1,3 +1,7 @@
+/// Unlike [continuous](crate::scale::ScaleContinuous) scales, ordinal scales have a discrete domain and range.
+/// For example, an ordinal scale might map a set of named categories to a set
+/// of colors, or determine the horizontal positions of columns in a column
+/// chart.
 #[derive(Clone, Debug)]
 pub struct ScaleOrdinal<'a, DomainType, RangeType> {
     pub domain: &'a [DomainType],
