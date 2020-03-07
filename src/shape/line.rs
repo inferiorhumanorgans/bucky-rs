@@ -73,10 +73,15 @@ impl<'a, SourceType> Line<'a, SourceType> {
     pub fn generate(&mut self, data: &[SourceType]) -> String {
         let mut context = self.curve.context();
 
-        context.start_line();
+        let mut started = false;
 
         for (i, datum) in data.iter().enumerate() {
             if (self.defined)(datum, i) {
+                if started == false {
+                    context.start_line();
+                    started = true;
+                }
+
                 context.point((self.x)(datum, i), (self.y)(datum, i));
             }
         }
