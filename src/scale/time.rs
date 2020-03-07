@@ -19,7 +19,7 @@ pub struct ScaleTime<RangeType, InterpolatorType> {
     pub interpolator: InterpolatorType,
 }
 
-impl ScaleTime<f64, NumberInterpolator> {
+impl<'a> ScaleTime<f64, NumberInterpolator> {
     pub fn new() -> Self {
         let epoch_start = NaiveDateTime::parse_from_str("2000-01-01T00:00:00", RFC_3339_FMT)
             .expect("Date parsing failed?");
@@ -31,6 +31,21 @@ impl ScaleTime<f64, NumberInterpolator> {
             range: 0.0..1.0,
             clamped: false,
             interpolator: NumberInterpolator::new(),
+        }
+    }
+
+    pub fn interpolator<NewInterpolator>(
+        self,
+        interpolator: NewInterpolator,
+    ) -> ScaleTime<f64, NewInterpolator>
+    where
+        NewInterpolator: RangeInterpolator<'a, f64>,
+    {
+        ScaleTime {
+            interpolator,
+            domain: self.domain,
+            range: self.range,
+            clamped: self.clamped,
         }
     }
 }
