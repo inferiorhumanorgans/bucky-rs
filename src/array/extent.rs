@@ -22,7 +22,12 @@ where
     }
 }
 
-#[test]
-fn name() {
-    assert_eq!(vec![1.0, 3.0, 2.0].extents(), 1.0..3.0);
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn name() {
+        assert_eq!(vec![1.0, 3.0, 2.0].extents(), 1.0..3.0);
+    }
 }

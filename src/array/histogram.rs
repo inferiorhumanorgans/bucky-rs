@@ -136,158 +136,163 @@ where
     }
 }
 
-#[test]
-fn simple() {
-    let data = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    let hist = Histogram::new(&data).histogram(|d| (*d).into());
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    eprintln!("HIST: {:?}", hist);
+    #[test]
+    fn simple() {
+        let data = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        let hist = Histogram::new(&data).histogram(|d| (*d).into());
 
-    assert_eq!(
-        hist[0],
-        HistogramBin::<i32>::from_range_and_values(1.0..4.0, vec![1, 2, 3])
-    );
-    assert_eq!(
-        hist[1],
-        HistogramBin::<i32>::from_range_and_values(4.0..6.0, vec![4, 5])
-    );
-    assert_eq!(
-        hist[2],
-        HistogramBin::<i32>::from_range_and_values(6.0..8.0, vec![6, 7])
-    );
-    assert_eq!(
-        hist[3],
-        HistogramBin::<i32>::from_range_and_values(8.0..10.0, vec![8, 9, 10])
-    );
-}
+        eprintln!("HIST: {:?}", hist);
 
-#[test]
-fn complex() {
-    #[derive(Debug, Clone, Copy, PartialEq)]
-    struct Item<'a> {
-        location: &'a str,
-        area: i32,
+        assert_eq!(
+            hist[0],
+            HistogramBin::<i32>::from_range_and_values(1.0..4.0, vec![1, 2, 3])
+        );
+        assert_eq!(
+            hist[1],
+            HistogramBin::<i32>::from_range_and_values(4.0..6.0, vec![4, 5])
+        );
+        assert_eq!(
+            hist[2],
+            HistogramBin::<i32>::from_range_and_values(6.0..8.0, vec![6, 7])
+        );
+        assert_eq!(
+            hist[3],
+            HistogramBin::<i32>::from_range_and_values(8.0..10.0, vec![8, 9, 10])
+        );
     }
 
-    let data = vec![
-        Item {
-            location: "alaska",
-            area: 1_518_800,
-        },
-        Item {
-            location: "texas",
-            area: 696_200,
-        },
-        Item {
-            location: "california",
-            area: 414_000,
-        },
-        Item {
-            location: "montana",
-            area: 380_850,
-        },
-        Item {
-            location: "new_mexico",
-            area: 314_460,
-        },
-        Item {
-            location: "arizona",
-            area: 295_000,
-        },
-        Item {
-            location: "nevada",
-            area: 286_350,
-        },
-        Item {
-            location: "colorado",
-            area: 269_837,
-        },
-        Item {
-            location: "oregon",
-            area: 254_810,
-        },
-        Item {
-            location: "wyoming",
-            area: 253_350,
-        },
-    ];
+    #[test]
+    fn complex() {
+        #[derive(Debug, Clone, Copy, PartialEq)]
+        struct Item<'a> {
+            location: &'a str,
+            area: i32,
+        }
 
-    let hist = Histogram::new(&data).histogram(|d| d.area.into());
+        let data = vec![
+            Item {
+                location: "alaska",
+                area: 1_518_800,
+            },
+            Item {
+                location: "texas",
+                area: 696_200,
+            },
+            Item {
+                location: "california",
+                area: 414_000,
+            },
+            Item {
+                location: "montana",
+                area: 380_850,
+            },
+            Item {
+                location: "new_mexico",
+                area: 314_460,
+            },
+            Item {
+                location: "arizona",
+                area: 295_000,
+            },
+            Item {
+                location: "nevada",
+                area: 286_350,
+            },
+            Item {
+                location: "colorado",
+                area: 269_837,
+            },
+            Item {
+                location: "oregon",
+                area: 254_810,
+            },
+            Item {
+                location: "wyoming",
+                area: 253_350,
+            },
+        ];
 
-    eprintln!("BINS:");
-    for bin in hist.iter() {
-        eprintln!("\t{:?}", bin)
+        let hist = Histogram::new(&data).histogram(|d| d.area.into());
+
+        eprintln!("BINS:");
+        for bin in hist.iter() {
+            eprintln!("\t{:?}", bin)
+        }
+
+        assert_eq!(
+            hist[0],
+            HistogramBin::<Item>::from_range_and_values(
+                253350.0..600000.0,
+                vec![data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9]]
+            )
+        );
+        assert_eq!(
+            hist[1],
+            HistogramBin::<Item>::from_range_and_values(600000.0..800000.0, vec![data[1]])
+        );
+        assert_eq!(
+            hist[5],
+            HistogramBin::<Item>::from_range_and_values(1400000.0..1518800.0, vec![data[0]])
+        );
     }
 
-    assert_eq!(
-        hist[0],
-        HistogramBin::<Item>::from_range_and_values(
-            253350.0..600000.0,
-            vec![data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9]]
-        )
-    );
-    assert_eq!(
-        hist[1],
-        HistogramBin::<Item>::from_range_and_values(600000.0..800000.0, vec![data[1]])
-    );
-    assert_eq!(
-        hist[5],
-        HistogramBin::<Item>::from_range_and_values(1400000.0..1518800.0, vec![data[0]])
-    );
-}
+    #[test]
+    fn computes_bins_of_specified_array() {
+        let data = vec![0, 0, 0, 10, 20, 20];
+        let hist = Histogram::new(&data).histogram(|d| (*d).into());
 
-#[test]
-fn computes_bins_of_specified_array() {
-    let data = vec![0, 0, 0, 10, 20, 20];
-    let hist = Histogram::new(&data).histogram(|d| (*d).into());
+        eprintln!("HIST: {:?}", hist);
 
-    eprintln!("HIST: {:?}", hist);
+        assert_eq!(
+            hist[0],
+            HistogramBin::<i32>::from_range_and_values(0.0..5.0, vec![0, 0, 0])
+        );
+        assert_eq!(
+            hist[1],
+            HistogramBin::<i32>::from_range_and_values(5.0..10.0, vec![])
+        );
+        assert_eq!(
+            hist[2],
+            HistogramBin::<i32>::from_range_and_values(10.0..15.0, vec![10])
+        );
+        assert_eq!(
+            hist[3],
+            HistogramBin::<i32>::from_range_and_values(15.0..20.0, vec![20, 20])
+        );
+    }
 
-    assert_eq!(
-        hist[0],
-        HistogramBin::<i32>::from_range_and_values(0.0..5.0, vec![0, 0, 0])
-    );
-    assert_eq!(
-        hist[1],
-        HistogramBin::<i32>::from_range_and_values(5.0..10.0, vec![])
-    );
-    assert_eq!(
-        hist[2],
-        HistogramBin::<i32>::from_range_and_values(10.0..15.0, vec![10])
-    );
-    assert_eq!(
-        hist[3],
-        HistogramBin::<i32>::from_range_and_values(15.0..20.0, vec![20, 20])
-    );
-}
+    #[test]
+    fn domain_sets_the_domain() {
+        let data = vec![1, 2, 2, 10, 18, 18];
+        let mut hist = Histogram::new(&data);
 
-#[test]
-fn domain_sets_the_domain() {
-    let data = vec![1, 2, 2, 10, 18, 18];
-    let mut hist = Histogram::new(&data);
+        let bins1 = hist.histogram(|d| (*d).into());
 
-    let bins1 = hist.histogram(|d| (*d).into());
+        hist = hist.domain(Some(0.0..20.0));
 
-    hist = hist.domain(Some(0.0..20.0));
+        let bins2 = hist.histogram(|d| (*d).into());
 
-    let bins2 = hist.histogram(|d| (*d).into());
+        assert_ne!(bins1, bins2);
 
-    assert_ne!(bins1, bins2);
-
-    assert_eq!(
-        bins2[0],
-        HistogramBin::<i32>::from_range_and_values(0.0..5.0, vec![1, 2, 2])
-    );
-    assert_eq!(
-        bins2[1],
-        HistogramBin::<i32>::from_range_and_values(5.0..10.0, vec![])
-    );
-    assert_eq!(
-        bins2[2],
-        HistogramBin::<i32>::from_range_and_values(10.0..15.0, vec![10])
-    );
-    assert_eq!(
-        bins2[3],
-        HistogramBin::<i32>::from_range_and_values(15.0..20.0, vec![18, 18])
-    );
+        assert_eq!(
+            bins2[0],
+            HistogramBin::<i32>::from_range_and_values(0.0..5.0, vec![1, 2, 2])
+        );
+        assert_eq!(
+            bins2[1],
+            HistogramBin::<i32>::from_range_and_values(5.0..10.0, vec![])
+        );
+        assert_eq!(
+            bins2[2],
+            HistogramBin::<i32>::from_range_and_values(10.0..15.0, vec![10])
+        );
+        assert_eq!(
+            bins2[3],
+            HistogramBin::<i32>::from_range_and_values(15.0..20.0, vec![18, 18])
+        );
+    }
 }

@@ -126,83 +126,89 @@ where
         }
     }
 }
-#[test]
-fn empty_if_equal_bounds() {
-    let empty_ticks: Vec<f64> = vec![];
 
-    assert_eq!(empty_ticks, (1.0..1.0).ticks(Some(-1)));
-    assert_eq!(empty_ticks, (1.0..1.0).ticks(Some(0)));
-    assert_eq!(empty_ticks, (1.0..1.0).ticks(None));
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn start_if_bounds_equal_positive_count() {
-    let ticks: Vec<f64> = vec![1.0];
+    #[test]
+    fn empty_if_equal_bounds() {
+        let empty_ticks: Vec<f64> = vec![];
 
-    assert_eq!(ticks, (1.0..1.0).ticks(Some(1)));
-    assert_eq!(ticks, (1.0..1.0).ticks(Some(10)));
-}
+        assert_eq!(empty_ticks, (1.0..1.0).ticks(Some(-1)));
+        assert_eq!(empty_ticks, (1.0..1.0).ticks(Some(0)));
+        assert_eq!(empty_ticks, (1.0..1.0).ticks(None));
+    }
 
-#[test]
-fn approx_count_plus_1_when_start_lt_stop() {
-    assert_eq!(
-        vec![0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
-        (0..1).ticks(Some(10))
-    );
-    assert_eq!(
-        (0..1).ticks(Some(9)),
-        vec![0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-    );
-    assert_eq!(
-        (0..1).ticks(Some(8)),
-        vec![0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-    );
-    assert_eq!((0..1).ticks(Some(7)), vec![0.0, 0.2, 0.4, 0.6, 0.8, 1.0]);
-    assert_eq!((0..1).ticks(Some(6)), vec![0.0, 0.2, 0.4, 0.6, 0.8, 1.0]);
-    assert_eq!((0..1).ticks(Some(5)), vec![0.0, 0.2, 0.4, 0.6, 0.8, 1.0]);
-    assert_eq!((0..1).ticks(Some(4)), vec![0.0, 0.2, 0.4, 0.6, 0.8, 1.0]);
-    assert_eq!((0..1).ticks(Some(3)), vec![0.0, 0.5, 1.0]);
-    assert_eq!((0..1).ticks(Some(2)), vec![0.0, 0.5, 1.0]);
-    assert_eq!((0..1).ticks(Some(1)), vec![0.0, 1.0]);
-    assert_eq!(
-        (0..10).ticks(Some(10)),
-        vec![0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
-    );
-    assert_eq!(
-        (0..10).ticks(Some(9)),
-        vec![0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
-    );
-    assert_eq!(
-        (0..10).ticks(Some(8)),
-        vec![0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
-    );
-    assert_eq!((0..10).ticks(Some(7)), vec![0.0, 2.0, 4.0, 6.0, 8.0, 10.0]);
-    assert_eq!((0..10).ticks(Some(6)), vec![0.0, 2.0, 4.0, 6.0, 8.0, 10.0]);
-    assert_eq!((0..10).ticks(Some(5)), vec![0.0, 2.0, 4.0, 6.0, 8.0, 10.0]);
-    assert_eq!((0..10).ticks(Some(4)), vec![0.0, 2.0, 4.0, 6.0, 8.0, 10.0]);
-    assert_eq!((0..10).ticks(Some(3)), vec![0.0, 5.0, 10.0]);
-    assert_eq!((0..10).ticks(Some(2)), vec![0.0, 5.0, 10.0]);
-    assert_eq!((0..10).ticks(Some(1)), vec![0.0, 10.0]);
-    assert_eq!(
-        (-10..10).ticks(Some(10)),
-        vec![-10.0, -8.0, -6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 8.0, 10.0]
-    );
-    assert_eq!(
-        (-10..10).ticks(Some(9)),
-        vec![-10.0, -8.0, -6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 8.0, 10.0]
-    );
-    assert_eq!(
-        (-10..10).ticks(Some(8)),
-        vec![-10.0, -8.0, -6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 8.0, 10.0]
-    );
-    assert_eq!(
-        (-10..10).ticks(Some(7)),
-        vec![-10.0, -8.0, -6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 8.0, 10.0]
-    );
-    assert_eq!((-10..10).ticks(Some(6)), vec![-10.0, -5.0, 0.0, 5.0, 10.0]);
-    assert_eq!((-10..10).ticks(Some(5)), vec![-10.0, -5.0, 0.0, 5.0, 10.0]);
-    assert_eq!((-10..10).ticks(Some(4)), vec![-10.0, -5.0, 0.0, 5.0, 10.0]);
-    assert_eq!((-10..10).ticks(Some(3)), vec![-10.0, -5.0, 0.0, 5.0, 10.0]);
-    assert_eq!((-10..10).ticks(Some(2)), vec![-10.0, 0.0, 10.0]);
-    assert_eq!((-10..10).ticks(Some(1)), vec![0.0,]);
+    #[test]
+    fn start_if_bounds_equal_positive_count() {
+        let ticks: Vec<f64> = vec![1.0];
+
+        assert_eq!(ticks, (1.0..1.0).ticks(Some(1)));
+        assert_eq!(ticks, (1.0..1.0).ticks(Some(10)));
+    }
+
+    #[test]
+    fn approx_count_plus_1_when_start_lt_stop() {
+        assert_eq!(
+            vec![0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+            (0..1).ticks(Some(10))
+        );
+        assert_eq!(
+            (0..1).ticks(Some(9)),
+            vec![0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+        );
+        assert_eq!(
+            (0..1).ticks(Some(8)),
+            vec![0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+        );
+        assert_eq!((0..1).ticks(Some(7)), vec![0.0, 0.2, 0.4, 0.6, 0.8, 1.0]);
+        assert_eq!((0..1).ticks(Some(6)), vec![0.0, 0.2, 0.4, 0.6, 0.8, 1.0]);
+        assert_eq!((0..1).ticks(Some(5)), vec![0.0, 0.2, 0.4, 0.6, 0.8, 1.0]);
+        assert_eq!((0..1).ticks(Some(4)), vec![0.0, 0.2, 0.4, 0.6, 0.8, 1.0]);
+        assert_eq!((0..1).ticks(Some(3)), vec![0.0, 0.5, 1.0]);
+        assert_eq!((0..1).ticks(Some(2)), vec![0.0, 0.5, 1.0]);
+        assert_eq!((0..1).ticks(Some(1)), vec![0.0, 1.0]);
+        assert_eq!(
+            (0..10).ticks(Some(10)),
+            vec![0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        );
+        assert_eq!(
+            (0..10).ticks(Some(9)),
+            vec![0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        );
+        assert_eq!(
+            (0..10).ticks(Some(8)),
+            vec![0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        );
+        assert_eq!((0..10).ticks(Some(7)), vec![0.0, 2.0, 4.0, 6.0, 8.0, 10.0]);
+        assert_eq!((0..10).ticks(Some(6)), vec![0.0, 2.0, 4.0, 6.0, 8.0, 10.0]);
+        assert_eq!((0..10).ticks(Some(5)), vec![0.0, 2.0, 4.0, 6.0, 8.0, 10.0]);
+        assert_eq!((0..10).ticks(Some(4)), vec![0.0, 2.0, 4.0, 6.0, 8.0, 10.0]);
+        assert_eq!((0..10).ticks(Some(3)), vec![0.0, 5.0, 10.0]);
+        assert_eq!((0..10).ticks(Some(2)), vec![0.0, 5.0, 10.0]);
+        assert_eq!((0..10).ticks(Some(1)), vec![0.0, 10.0]);
+        assert_eq!(
+            (-10..10).ticks(Some(10)),
+            vec![-10.0, -8.0, -6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 8.0, 10.0]
+        );
+        assert_eq!(
+            (-10..10).ticks(Some(9)),
+            vec![-10.0, -8.0, -6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 8.0, 10.0]
+        );
+        assert_eq!(
+            (-10..10).ticks(Some(8)),
+            vec![-10.0, -8.0, -6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 8.0, 10.0]
+        );
+        assert_eq!(
+            (-10..10).ticks(Some(7)),
+            vec![-10.0, -8.0, -6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 8.0, 10.0]
+        );
+        assert_eq!((-10..10).ticks(Some(6)), vec![-10.0, -5.0, 0.0, 5.0, 10.0]);
+        assert_eq!((-10..10).ticks(Some(5)), vec![-10.0, -5.0, 0.0, 5.0, 10.0]);
+        assert_eq!((-10..10).ticks(Some(4)), vec![-10.0, -5.0, 0.0, 5.0, 10.0]);
+        assert_eq!((-10..10).ticks(Some(3)), vec![-10.0, -5.0, 0.0, 5.0, 10.0]);
+        assert_eq!((-10..10).ticks(Some(2)), vec![-10.0, 0.0, 10.0]);
+        assert_eq!((-10..10).ticks(Some(1)), vec![0.0,]);
+    }
 }

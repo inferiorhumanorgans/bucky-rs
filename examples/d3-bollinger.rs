@@ -286,9 +286,7 @@ fn main() -> Result<()> {
 
 #[cfg(test)]
 mod tests {
-    use test::Bencher;
     use super::*;
-    const ITERATIONS : usize = 10000;
 
     #[test]
     fn bands_are_as_expected() {
@@ -300,9 +298,16 @@ mod tests {
         assert_eq!(&[ 0.5, 1.5, 2.5, 3.5, 4.5 ], &bands.mid[1..6]);
         assert_eq!(&[ 1.9142135623730951, 2.914213562373095, 3.914213562373095, 4.914213562373095, 5.914213562373095 ], &bands.upper[1..6]);
     }
+}
     
+#[cfg(test)]
+mod benches {
+    use test::Bencher;
+    use super::*;
+    const ITERATIONS : usize = 10000;
+
     #[bench]
-    fn bench_bands(b: &mut Bencher) {
+    fn bands(b: &mut Bencher) {
         let periods = 2;
         let std_dev = 2;
         let values = &[0., 1., 2., 3., 4., 5.];

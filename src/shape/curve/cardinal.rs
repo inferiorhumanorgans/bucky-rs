@@ -119,61 +119,66 @@ impl CurveContext for CurveCardinalContext {
     }
 }
 
-#[test]
-fn expected_results() {
-    use crate::shape::line::Line;
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    let mut line = Line::<(f64, f64)>::new()
-        .x(Box::new(|datum, _i| datum.0))
-        .y(Box::new(|datum, _i| datum.1))
-        .curve(Box::new(CurveCardinal::new()));
+    #[test]
+    fn expected_results() {
+        use crate::shape::line::Line;
 
-    {
-        // test.pathEqual(l([[0, 1]]), "M0,1Z");
-        let data: &[(f64, f64)] = &[(0., 1.)];
-        assert_eq!("M 0 1 L 0 1 z", line.generate(data));
+        let mut line = Line::<(f64, f64)>::new()
+            .x(Box::new(|datum, _i| datum.0))
+            .y(Box::new(|datum, _i| datum.1))
+            .curve(Box::new(CurveCardinal::new()));
+
+        {
+            // test.pathEqual(l([[0, 1]]), "M0,1Z");
+            let data: &[(f64, f64)] = &[(0., 1.)];
+            assert_eq!("M 0 1 L 0 1 z", line.generate(data));
+        }
+
+        {
+            // test.pathEqual(l([[0, 1], [1, 3]]), "M0,1L1,3");
+            let data: &[(f64, f64)] = &[(0., 1.), (1., 3.)];
+            assert_eq!("M 0 1 L 1 3", line.generate(data));
+        }
+
+        {
+            // test.pathEqual(l([[0, 1], [1, 3], [2, 1]]), "M0,1C0,1,0.666667,3,1,3C1.333333,3,2,1,2,1");
+            let data: &[(f64, f64)] = &[(0., 1.), (1., 3.), (2., 1.)];
+            assert_eq!(
+                "M 0 1 C 0 1 0.6666667 3 1 3 C 1.3333334 3 2 1 2 1",
+                line.generate(data)
+            );
+        }
+
+        {
+            // test.pathEqual(l([[0, 1], [1, 3], [2, 1], [3, 3]]), "M0,1C0,1,0.666667,3,1,3C1.333333,3,1.666667,1,2,1C2.333333,1,3,3,3,3");
+            let data: &[(f64, f64)] = &[(0., 1.), (1., 3.), (2., 1.), (3., 3.)];
+            assert_eq!(
+                "M 0 1 C 0 1 0.6666667 3 1 3 C 1.3333334 3 1.6666666 1 2 1 C 2.3333333 1 3 3 3 3",
+                line.generate(data)
+            );
+        }
     }
 
-    {
-        // test.pathEqual(l([[0, 1], [1, 3]]), "M0,1L1,3");
-        let data: &[(f64, f64)] = &[(0., 1.), (1., 3.)];
-        assert_eq!("M 0 1 L 1 3", line.generate(data));
-    }
+    #[test]
+    fn expected_results_with_different_tension() {
+        use crate::shape::line::Line;
 
-    {
-        // test.pathEqual(l([[0, 1], [1, 3], [2, 1]]), "M0,1C0,1,0.666667,3,1,3C1.333333,3,2,1,2,1");
-        let data: &[(f64, f64)] = &[(0., 1.), (1., 3.), (2., 1.)];
-        assert_eq!(
-            "M 0 1 C 0 1 0.6666667 3 1 3 C 1.3333334 3 2 1 2 1",
-            line.generate(data)
-        );
-    }
+        let mut line = Line::<(f64, f64)>::new()
+            .curve(Box::new(CurveCardinal::with_tension(0.5)))
+            .x(Box::new(|datum, _i| datum.0))
+            .y(Box::new(|datum, _i| datum.1));
 
-    {
-        // test.pathEqual(l([[0, 1], [1, 3], [2, 1], [3, 3]]), "M0,1C0,1,0.666667,3,1,3C1.333333,3,1.666667,1,2,1C2.333333,1,3,3,3,3");
-        let data: &[(f64, f64)] = &[(0., 1.), (1., 3.), (2., 1.), (3., 3.)];
-        assert_eq!(
-            "M 0 1 C 0 1 0.6666667 3 1 3 C 1.3333334 3 1.6666666 1 2 1 C 2.3333333 1 3 3 3 3",
-            line.generate(data)
-        );
-    }
-}
-
-#[test]
-fn expected_results_with_different_tension() {
-    use crate::shape::line::Line;
-
-    let mut line = Line::<(f64, f64)>::new()
-        .curve(Box::new(CurveCardinal::with_tension(0.5)))
-        .x(Box::new(|datum, _i| datum.0))
-        .y(Box::new(|datum, _i| datum.1));
-
-    {
-        // test.pathEqual(shape.line().curve(shape.curveCardinal.tension(0.5))([[0, 1], [1, 3], [2, 1], [3, 3]]), "M0,1C0,1,0.833333,3,1,3C1.166667,3,1.833333,1,2,1C2.166667,1,3,3,3,3");
-        let data: &[(f64, f64)] = &[(0., 1.), (1., 3.), (2., 1.), (3., 3.)];
-        assert_eq!(
-            "M 0 1 C 0 1 0.8333333 3 1 3 C 1.1666666 3 1.8333334 1 2 1 C 2.1666667 1 3 3 3 3",
-            line.generate(data)
-        );
+        {
+            // test.pathEqual(shape.line().curve(shape.curveCardinal.tension(0.5))([[0, 1], [1, 3], [2, 1], [3, 3]]), "M0,1C0,1,0.833333,3,1,3C1.166667,3,1.833333,1,2,1C2.166667,1,3,3,3,3");
+            let data: &[(f64, f64)] = &[(0., 1.), (1., 3.), (2., 1.), (3., 3.)];
+            assert_eq!(
+                "M 0 1 C 0 1 0.8333333 3 1 3 C 1.1666666 3 1.8333334 1 2 1 C 2.1666667 1 3 3 3 3",
+                line.generate(data)
+            );
+        }
     }
 }

@@ -25,16 +25,6 @@ impl Hsl {
     }
 }
 
-#[test]
-fn hsl_formatting() {
-    let hsl = Hsl {
-        hue: 300.0,
-        saturation: 0.5,
-        lightness: 0.4,
-    };
-    assert_eq!(format!("{}", hsl), "hsl(300, 50%, 40%)")
-}
-
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Rgb {
     pub red: u16,
@@ -65,5 +55,20 @@ impl From<Hsl> for Rgb {
             green: foo(8).round() as u16,
             blue: foo(4).round() as u16,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn hsl_formatting() {
+        let hsl = Hsl {
+            hue: 300.0,
+            saturation: 0.5,
+            lightness: 0.4,
+        };
+        assert_eq!(format!("{}", hsl), "hsl(300, 50%, 40%)")
     }
 }

@@ -64,81 +64,85 @@ where
     }
 }
 
-#[test]
-fn example_from_readme() {
-    #[derive(Debug)]
-    struct Datum {
-        pub month: String,
-        pub apples: i32,
-        pub bananas: i32,
-        pub cherries: i32,
-        pub dates: i32,
-    }
-    impl Stackable for &Datum {
-        fn values(&self) -> Vec<f64> {
-            vec![
-                self.apples.into(),
-                self.bananas.into(),
-                self.cherries.into(),
-                self.dates.into(),
-            ]
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn example_from_readme() {
+        #[derive(Debug)]
+        struct Datum {
+            pub month: String,
+            pub apples: i32,
+            pub bananas: i32,
+            pub cherries: i32,
+            pub dates: i32,
         }
+        impl Stackable for &Datum {
+            fn values(&self) -> Vec<f64> {
+                vec![
+                    self.apples.into(),
+                    self.bananas.into(),
+                    self.cherries.into(),
+                    self.dates.into(),
+                ]
+            }
+        }
+
+        let data = vec![
+            Datum {
+                month: "Jan".into(),
+                apples: 3840,
+                bananas: 1920,
+                cherries: 960,
+                dates: 400,
+            },
+            Datum {
+                month: "Feb".into(),
+                apples: 1600,
+                bananas: 1440,
+                cherries: 960,
+                dates: 400,
+            },
+            Datum {
+                month: "Mar".into(),
+                apples: 640,
+                bananas: 960,
+                cherries: 640,
+                dates: 400,
+            },
+            Datum {
+                month: "Apr".into(),
+                apples: 320,
+                bananas: 480,
+                cherries: 640,
+                dates: 400,
+            },
+        ];
+
+        let s = Stack::new(data.iter()).stack();
+
+        assert_eq!(s[0], vec![0.0..3840.0, 0.0..1600.0, 0.0..640.0, 0.0..320.0]);
+        assert_eq!(
+            s[1],
+            vec![3840.0..5760.0, 1600.0..3040.0, 640.0..1600.0, 320.0..800.0]
+        );
+        assert_eq!(
+            s[2],
+            vec![
+                5760.0..6720.0,
+                3040.0..4000.0,
+                1600.0..2240.0,
+                800.0..1440.0
+            ]
+        );
+        assert_eq!(
+            s[3],
+            vec![
+                6720.0..7120.0,
+                4000.0..4400.0,
+                2240.0..2640.0,
+                1440.0..1840.0
+            ]
+        );
     }
-
-    let data = vec![
-        Datum {
-            month: "Jan".into(),
-            apples: 3840,
-            bananas: 1920,
-            cherries: 960,
-            dates: 400,
-        },
-        Datum {
-            month: "Feb".into(),
-            apples: 1600,
-            bananas: 1440,
-            cherries: 960,
-            dates: 400,
-        },
-        Datum {
-            month: "Mar".into(),
-            apples: 640,
-            bananas: 960,
-            cherries: 640,
-            dates: 400,
-        },
-        Datum {
-            month: "Apr".into(),
-            apples: 320,
-            bananas: 480,
-            cherries: 640,
-            dates: 400,
-        },
-    ];
-
-    let s = Stack::new(data.iter()).stack();
-
-    assert_eq!(s[0], vec![0.0..3840.0, 0.0..1600.0, 0.0..640.0, 0.0..320.0]);
-    assert_eq!(
-        s[1],
-        vec![3840.0..5760.0, 1600.0..3040.0, 640.0..1600.0, 320.0..800.0]
-    );
-    assert_eq!(
-        s[2],
-        vec![
-            5760.0..6720.0,
-            3040.0..4000.0,
-            1600.0..2240.0,
-            800.0..1440.0
-        ]
-    );
-    assert_eq!(
-        s[3],
-        vec![
-            6720.0..7120.0,
-            4000.0..4400.0,
-            2240.0..2640.0,
-            1440.0..1840.0
-        ]
-    );
 }

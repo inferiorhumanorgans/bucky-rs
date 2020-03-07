@@ -124,286 +124,290 @@ impl TickDuration {
 }
 
 #[cfg(test)]
-const RFC_3339_FMT: &str = "%Y-%m-%dT%H:%M:%S";
+mod tests {
+    use super::*;
 
-#[test]
-fn tick_duration_floor_1() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:00:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:00:08", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Seconds(1).floor(&input_date_time)
-        );
-    }
-}
+    const RFC_3339_FMT: &str = "%Y-%m-%dT%H:%M:%S";
 
-#[test]
-fn tick_duration_floor_2() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:00:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:00:05", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Seconds(5).floor(&input_date_time)
-        );
+    #[test]
+    fn tick_duration_floor_1() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:00:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:00:08", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Seconds(1).floor(&input_date_time)
+            );
+        }
     }
-}
 
-#[test]
-fn tick_duration_floor_3() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:00:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:00:00", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Minutes(1).floor(&input_date_time)
-        );
+    #[test]
+    fn tick_duration_floor_2() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:00:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:00:05", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Seconds(5).floor(&input_date_time)
+            );
+        }
     }
-}
 
-#[test]
-fn tick_duration_floor_4() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:08:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:05:00", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Minutes(5).floor(&input_date_time)
-        );
+    #[test]
+    fn tick_duration_floor_3() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:00:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:00:00", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Minutes(1).floor(&input_date_time)
+            );
+        }
     }
-}
 
-#[test]
-#[ignore]
-fn tick_duration_floor_5() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:08:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:05:00", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Weeks(5).floor(&input_date_time)
-        );
+    #[test]
+    fn tick_duration_floor_4() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:08:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:05:00", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Minutes(5).floor(&input_date_time)
+            );
+        }
     }
-}
 
-#[test]
-fn tick_duration_floor_6() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-02-24T00:08:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:00:00", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Months(3).floor(&input_date_time)
-        );
+    #[test]
+    #[ignore]
+    fn tick_duration_floor_5() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:08:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:05:00", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Weeks(5).floor(&input_date_time)
+            );
+        }
     }
-}
 
-#[test]
-fn tick_duration_floor_7() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-02-24T00:08:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-02-01T00:00:00", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Months(1).floor(&input_date_time)
-        );
+    #[test]
+    fn tick_duration_floor_6() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-02-24T00:08:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:00:00", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Months(3).floor(&input_date_time)
+            );
+        }
     }
-}
 
-#[test]
-fn tick_duration_floor_8() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-02-24T00:08:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-02-24T00:00:00", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Hours(1).floor(&input_date_time)
-        );
+    #[test]
+    fn tick_duration_floor_7() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-02-24T00:08:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-02-01T00:00:00", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Months(1).floor(&input_date_time)
+            );
+        }
     }
-}
 
-#[test]
-fn tick_duration_floor_9() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-02-24T04:08:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-02-24T04:00:00", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Hours(1).floor(&input_date_time)
-        );
+    #[test]
+    fn tick_duration_floor_8() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-02-24T00:08:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-02-24T00:00:00", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Hours(1).floor(&input_date_time)
+            );
+        }
     }
-}
 
-#[test]
-fn tick_duration_floor_10() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-02-24T05:08:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-02-24T03:00:00", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Hours(3).floor(&input_date_time)
-        );
+    #[test]
+    fn tick_duration_floor_9() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-02-24T04:08:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-02-24T04:00:00", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Hours(1).floor(&input_date_time)
+            );
+        }
     }
-}
-#[test]
-fn tick_duration_ceil_1() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:00:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:00:09", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Seconds(1).ceil(&input_date_time)
-        );
-    }
-}
 
-#[test]
-fn tick_duration_ceil_2() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:00:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:00:10", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Seconds(5).ceil(&input_date_time)
-        );
+    #[test]
+    fn tick_duration_floor_10() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-02-24T05:08:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-02-24T03:00:00", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Hours(3).floor(&input_date_time)
+            );
+        }
     }
-}
-
-#[test]
-fn tick_duration_ceil_3() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:00:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:01:00", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Minutes(1).ceil(&input_date_time)
-        );
+    #[test]
+    fn tick_duration_ceil_1() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:00:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:00:09", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Seconds(1).ceil(&input_date_time)
+            );
+        }
     }
-}
 
-#[test]
-fn tick_duration_ceil_4() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:08:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:10:00", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Minutes(5).ceil(&input_date_time)
-        );
+    #[test]
+    fn tick_duration_ceil_2() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:00:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:00:10", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Seconds(5).ceil(&input_date_time)
+            );
+        }
     }
-}
 
-#[test]
-#[ignore]
-fn tick_duration_ceil_5() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:08:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-01-01T00:05:00", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Weeks(5).ceil(&input_date_time)
-        );
+    #[test]
+    fn tick_duration_ceil_3() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:00:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:01:00", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Minutes(1).ceil(&input_date_time)
+            );
+        }
     }
-}
 
-#[test]
-fn tick_duration_ceil_6() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-02-24T00:08:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-04-01T00:00:00", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Months(3).ceil(&input_date_time)
-        );
+    #[test]
+    fn tick_duration_ceil_4() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:08:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:10:00", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Minutes(5).ceil(&input_date_time)
+            );
+        }
     }
-}
 
-#[test]
-fn tick_duration_ceil_7() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-02-24T00:08:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-03-01T00:00:00", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Months(1).ceil(&input_date_time)
-        );
+    #[test]
+    #[ignore]
+    fn tick_duration_ceil_5() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:08:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-01-01T00:05:00", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Weeks(5).ceil(&input_date_time)
+            );
+        }
     }
-}
 
-#[test]
-fn tick_duration_ceil_8() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-02-24T00:08:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-02-24T01:00:00", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Hours(1).ceil(&input_date_time)
-        );
+    #[test]
+    fn tick_duration_ceil_6() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-02-24T00:08:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-04-01T00:00:00", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Months(3).ceil(&input_date_time)
+            );
+        }
     }
-}
 
-#[test]
-fn tick_duration_ceil_9() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-02-24T04:08:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-02-24T05:00:00", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Hours(1).ceil(&input_date_time)
-        );
+    #[test]
+    fn tick_duration_ceil_7() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-02-24T00:08:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-03-01T00:00:00", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Months(1).ceil(&input_date_time)
+            );
+        }
     }
-}
 
-#[test]
-fn tick_duration_ceil_10() {
-    {
-        let input_date_time =
-            NaiveDateTime::parse_from_str("2000-02-24T05:08:08", RFC_3339_FMT).unwrap();
-        let output_date_time =
-            NaiveDateTime::parse_from_str("2000-02-24T06:00:00", RFC_3339_FMT).unwrap();
-        assert_eq!(
-            output_date_time,
-            TickDuration::Hours(3).ceil(&input_date_time)
-        );
+    #[test]
+    fn tick_duration_ceil_8() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-02-24T00:08:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-02-24T01:00:00", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Hours(1).ceil(&input_date_time)
+            );
+        }
+    }
+
+    #[test]
+    fn tick_duration_ceil_9() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-02-24T04:08:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-02-24T05:00:00", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Hours(1).ceil(&input_date_time)
+            );
+        }
+    }
+
+    #[test]
+    fn tick_duration_ceil_10() {
+        {
+            let input_date_time =
+                NaiveDateTime::parse_from_str("2000-02-24T05:08:08", RFC_3339_FMT).unwrap();
+            let output_date_time =
+                NaiveDateTime::parse_from_str("2000-02-24T06:00:00", RFC_3339_FMT).unwrap();
+            assert_eq!(
+                output_date_time,
+                TickDuration::Hours(3).ceil(&input_date_time)
+            );
+        }
     }
 }
 

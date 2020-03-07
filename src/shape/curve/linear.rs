@@ -64,30 +64,33 @@ impl CurveContext for CurveLinearContext {
     }
 }
 
-#[test]
-fn expected_results() {
-    use crate::shape::line::Line;
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn expected_results() {
+        use crate::shape::line::Line;
 
-    let mut line = Line::<(f64, f64)>::new()
-        .x(Box::new(|datum, _i| datum.0))
-        .y(Box::new(|datum, _i| datum.1))
-        .defined(Box::new(|datum, _i| !datum.0.is_nan() && !datum.1.is_nan()));
+        let mut line = Line::<(f64, f64)>::new()
+            .x(Box::new(|datum, _i| datum.0))
+            .y(Box::new(|datum, _i| datum.1))
+            .defined(Box::new(|datum, _i| !datum.0.is_nan() && !datum.1.is_nan()));
 
-    {
-        // test.pathEqual(l([[0, 1]]), "M0,1Z");
-        let data: &[(f64, f64)] = &[(0., 1.)];
-        assert_eq!("M 0 1 L 0 1 z", line.generate(data));
-    }
+        {
+            // test.pathEqual(l([[0, 1]]), "M0,1Z");
+            let data: &[(f64, f64)] = &[(0., 1.)];
+            assert_eq!("M 0 1 L 0 1 z", line.generate(data));
+        }
 
-    {
-        // test.pathEqual(l([[0, 1], [2, 3]]), "M0,1L2,3");
-        let data: &[(f64, f64)] = &[(0., 1.), (2., 3.)];
-        assert_eq!("M 0 1 L 2 3", line.generate(data));
-    }
+        {
+            // test.pathEqual(l([[0, 1], [2, 3]]), "M0,1L2,3");
+            let data: &[(f64, f64)] = &[(0., 1.), (2., 3.)];
+            assert_eq!("M 0 1 L 2 3", line.generate(data));
+        }
 
-    {
-        // test.pathEqual(l([[0, 1], [2, 3], [4, 5]]), "M0,1L2,3L4,5");
-        let data: &[(f64, f64)] = &[(0., 1.), (2., 3.), (4., 5.)];
-        assert_eq!("M 0 1 L 2 3 L 4 5", line.generate(data));
+        {
+            // test.pathEqual(l([[0, 1], [2, 3], [4, 5]]), "M0,1L2,3L4,5");
+            let data: &[(f64, f64)] = &[(0., 1.), (2., 3.), (4., 5.)];
+            assert_eq!("M 0 1 L 2 3 L 4 5", line.generate(data));
+        }
     }
 }

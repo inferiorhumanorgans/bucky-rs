@@ -64,32 +64,37 @@ where DataType: Into<f64> + Copy {
    
 }
 
-#[test]
-fn quantile() {
-    let data = vec![0, 10, 30];
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    assert_eq!(data.quantile(0.0), 0.0);
-    assert_eq!(data.quantile(0.5), 10.0);
-    assert_eq!(data.quantile(1.0), 30.0);
-    assert_eq!(data.quantile(0.25), 5.0);
-    assert_eq!(data.quantile(0.75), 20.0);
-    assert_eq!(data.quantile(0.1), 2.0);
-}
+    #[test]
+    fn quantile() {
+        let data = vec![0, 10, 30];
 
-#[test]
-fn quantile_by_key() {
-    {
-        let data = vec![0_i32, 10, 30];
+        assert_eq!(data.quantile(0.0), 0.0);
+        assert_eq!(data.quantile(0.5), 10.0);
+        assert_eq!(data.quantile(1.0), 30.0);
+        assert_eq!(data.quantile(0.25), 5.0);
+        assert_eq!(data.quantile(0.75), 20.0);
+        assert_eq!(data.quantile(0.1), 2.0);
+    }
 
-        // If types can be inferred this works:
-        assert_eq!(data.quantile_by_key(0.0, |d| (*d).into()), 0.0);
+    #[test]
+    fn quantile_by_key() {
+        {
+            let data = vec![0_i32, 10, 30];
 
-        // Otherwise we need to be explicit:
-        let accessor = |d : &i32| (*d).into();
-        assert_eq!(data.quantile_by_key(0.5, accessor), 10.0);
-        assert_eq!(data.quantile_by_key(1.0, accessor), 30.0);
-        assert_eq!(data.quantile_by_key(0.25, accessor), 5.0);
-        assert_eq!(data.quantile_by_key(0.75, accessor), 20.0);
-        assert_eq!(data.quantile_by_key(0.1, accessor), 2.0);
+            // If types can be inferred this works:
+            assert_eq!(data.quantile_by_key(0.0, |d| (*d).into()), 0.0);
+
+            // Otherwise we need to be explicit:
+            let accessor = |d : &i32| (*d).into();
+            assert_eq!(data.quantile_by_key(0.5, accessor), 10.0);
+            assert_eq!(data.quantile_by_key(1.0, accessor), 30.0);
+            assert_eq!(data.quantile_by_key(0.25, accessor), 5.0);
+            assert_eq!(data.quantile_by_key(0.75, accessor), 20.0);
+            assert_eq!(data.quantile_by_key(0.1, accessor), 2.0);
+        }
     }
 }

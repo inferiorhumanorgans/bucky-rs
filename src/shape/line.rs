@@ -115,18 +115,3 @@ pub trait LineSource {
 
 // pub struct CurveMonotoneY {}
 // impl Curve for CurveMonotoneY {}
-
-#[cfg(test)]
-impl LineSource for (f64, f64) {
-    fn x(&self) -> f64 {
-        self.0
-    }
-
-    fn y(&self) -> f64 {
-        self.1
-    }
-
-    fn defined(&self) -> bool {
-        true
-    }
-}

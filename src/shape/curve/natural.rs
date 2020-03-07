@@ -128,40 +128,45 @@ impl CurveContext for CurveNaturalContext {
     }
 }
 
-#[test]
-fn expected_results() {
-    use crate::shape::line::Line;
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    let mut line = Line::<(f64, f64)>::new()
-        .x(Box::new(|datum, _i| datum.0))
-        .y(Box::new(|datum, _i| datum.1))
-        .curve(Box::new(CurveNatural::new()));
+    #[test]
+    fn expected_results() {
+        use crate::shape::line::Line;
 
-    {
-        // test.pathEqual(l([[0, 1]]), "M0,1Z");
-        let data: &[(f64, f64)] = &[(0., 1.)];
-        assert_eq!("M 0 1 L 0 1 z", line.generate(data));
-    }
+        let mut line = Line::<(f64, f64)>::new()
+            .x(Box::new(|datum, _i| datum.0))
+            .y(Box::new(|datum, _i| datum.1))
+            .curve(Box::new(CurveNatural::new()));
 
-    {
-        // test.pathEqual(l([[0, 1], [1, 3]]), "M0,1L1,3");
-        let data: &[(f64, f64)] = &[(0., 1.), (1., 3.)];
-        assert_eq!("M 0 1 L 1 3", line.generate(data));
-    }
+        {
+            // test.pathEqual(l([[0, 1]]), "M0,1Z");
+            let data: &[(f64, f64)] = &[(0., 1.)];
+            assert_eq!("M 0 1 L 0 1 z", line.generate(data));
+        }
 
-    // NOTE: Rust string formatting rounds with more precision than Javascript by default
-    {
-        // test.pathEqual(l([[0, 1], [1, 3], [2, 1]]), "M0,1C0.333333,2,0.666667,3,1,3C1.333333,3,1.666667,2,2,1");
-        let data: &[(f64, f64)] = &[(0., 1.), (1., 3.), (2., 1.)];
-        assert_eq!(
-            "M 0 1 C 0.33333334 2 0.6666667 3 1 3 C 1.3333334 3 1.6666666 2 2 1",
-            line.generate(data)
-        );
-    }
+        {
+            // test.pathEqual(l([[0, 1], [1, 3]]), "M0,1L1,3");
+            let data: &[(f64, f64)] = &[(0., 1.), (1., 3.)];
+            assert_eq!("M 0 1 L 1 3", line.generate(data));
+        }
 
-    {
-        // test.pathEqual(l([[0, 1], [1, 3], [2, 1], [3, 3]]), "M0,1C0.333333,2.111111,0.666667,3.222222,1,3C1.333333,2.777778,1.666667,1.222222,2,1C2.333333,0.777778,2.666667,1.888889,3,3");
-        let data: &[(f64, f64)] = &[(0., 1.), (1., 3.), (2., 1.), (3., 3.)];
-        assert_eq!("M 0 1 C 0.33333334 2.1111112 0.6666667 3.2222223 1 3 C 1.3333334 2.7777777 1.6666666 1.2222222 2 1 C 2.3333333 0.7777778 2.6666667 1.8888888 3 3", line.generate(data));
+        // NOTE: Rust string formatting rounds with more precision than Javascript by default
+        {
+            // test.pathEqual(l([[0, 1], [1, 3], [2, 1]]), "M0,1C0.333333,2,0.666667,3,1,3C1.333333,3,1.666667,2,2,1");
+            let data: &[(f64, f64)] = &[(0., 1.), (1., 3.), (2., 1.)];
+            assert_eq!(
+                "M 0 1 C 0.33333334 2 0.6666667 3 1 3 C 1.3333334 3 1.6666666 2 2 1",
+                line.generate(data)
+            );
+        }
+
+        {
+            // test.pathEqual(l([[0, 1], [1, 3], [2, 1], [3, 3]]), "M0,1C0.333333,2.111111,0.666667,3.222222,1,3C1.333333,2.777778,1.666667,1.222222,2,1C2.333333,0.777778,2.666667,1.888889,3,3");
+            let data: &[(f64, f64)] = &[(0., 1.), (1., 3.), (2., 1.), (3., 3.)];
+            assert_eq!("M 0 1 C 0.33333334 2.1111112 0.6666667 3.2222223 1 3 C 1.3333334 2.7777777 1.6666666 1.2222222 2 1 C 2.3333333 0.7777778 2.6666667 1.8888888 3 3", line.generate(data));
+        }
     }
 }

@@ -32,22 +32,27 @@ where
     }
 }
 
-#[test]
-fn sturges() {
-    let threshold = SturgesThreshold {};
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    {
-        let domain = vec![1, 2, 3, 4, 5];
-        assert_eq!(threshold.threshold(&domain, 0, 0), 4);
-    }
+    #[test]
+    fn sturges() {
+        let threshold = SturgesThreshold {};
 
-    {
-        let domain = vec![1, 2, 3];
-        assert_eq!(threshold.threshold(&domain, 0, 0), 3);
-    }
+        {
+            let domain = vec![1, 2, 3, 4, 5];
+            assert_eq!(threshold.threshold(&domain, 0, 0), 4);
+        }
 
-    {
-        let domain = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-        assert_eq!(threshold.threshold(&domain, 0, 0), 5);
+        {
+            let domain = vec![1, 2, 3];
+            assert_eq!(threshold.threshold(&domain, 0, 0), 3);
+        }
+
+        {
+            let domain = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+            assert_eq!(threshold.threshold(&domain, 0, 0), 5);
+        }
     }
 }

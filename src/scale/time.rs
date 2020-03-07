@@ -145,130 +145,134 @@ where
     }
 }
 
-#[test]
-fn defaults() -> Result<()> {
-    let scale = ScaleTime::new();
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn defaults() -> Result<()> {
+        let scale = ScaleTime::new();
 
-    {
-        let point = NaiveDateTime::parse_from_str("2000-01-01T00:00:00", RFC_3339_FMT)?;
-        assert_eq!(0.0, scale.scale(point));
+        {
+            let point = NaiveDateTime::parse_from_str("2000-01-01T00:00:00", RFC_3339_FMT)?;
+            assert_eq!(0.0, scale.scale(point));
+        }
+
+        {
+            let point = NaiveDateTime::parse_from_str("2000-01-01T12:00:00", RFC_3339_FMT)?;
+            assert_eq!(0.5, scale.scale(point));
+        }
+
+        {
+            let point = NaiveDateTime::parse_from_str("2000-01-02T00:00:00", RFC_3339_FMT)?;
+            assert_eq!(1.0, scale.scale(point));
+        }
+
+        Ok(())
     }
 
-    {
-        let point = NaiveDateTime::parse_from_str("2000-01-01T12:00:00", RFC_3339_FMT)?;
-        assert_eq!(0.5, scale.scale(point));
+    #[test]
+    fn nice_defaults_to_10() -> Result<()> {
+        let scale = {
+            let d0 = NaiveDateTime::parse_from_str("2000-01-01T00:17:00", RFC_3339_FMT)?;
+            let d1 = NaiveDateTime::parse_from_str("2000-01-01T23:42:00", RFC_3339_FMT)?;
+            ScaleTime::new().domain(d0..d1)?.nice(None::<i32>)?
+        };
+
+        let d0 = NaiveDateTime::parse_from_str("2000-01-01T00:00:00", RFC_3339_FMT)?;
+        let d1 = NaiveDateTime::parse_from_str("2000-01-02T00:00:00", RFC_3339_FMT)?;
+        assert_eq!(scale.domain.start, d0);
+        assert_eq!(scale.domain.end, d1);
+
+        Ok(())
     }
 
-    {
-        let point = NaiveDateTime::parse_from_str("2000-01-02T00:00:00", RFC_3339_FMT)?;
-        assert_eq!(1.0, scale.scale(point));
+    #[test]
+    fn nice_multi_year() -> Result<()> {
+        let scale = {
+            let d0 = NaiveDateTime::parse_from_str("2001-01-01T00:00:00", RFC_3339_FMT).unwrap();
+            let d1 = NaiveDateTime::parse_from_str("2138-01-01T00:42:00", RFC_3339_FMT).unwrap();
+            ScaleTime::new().domain(d0..d1)?.nice(None::<i32>)?
+        };
+
+        let d0 = NaiveDateTime::parse_from_str("2000-01-01T00:00:00", RFC_3339_FMT).unwrap();
+        let d1 = NaiveDateTime::parse_from_str("2140-01-01T00:00:00", RFC_3339_FMT).unwrap();
+        assert_eq!(scale.domain.start, d0);
+        assert_eq!(scale.domain.end, d1);
+
+        Ok(())
     }
 
-    Ok(())
-}
+    #[test]
+    fn nice_works_on_empty_domain() -> Result<()> {
+        let d0 = NaiveDateTime::parse_from_str("2009-01-01T00:12:00", RFC_3339_FMT).unwrap();
+        let d1 = NaiveDateTime::parse_from_str("2009-01-01T00:12:00", RFC_3339_FMT).unwrap();
 
-#[test]
-fn nice_defaults_to_10() -> Result<()> {
-    let scale = {
-        let d0 = NaiveDateTime::parse_from_str("2000-01-01T00:17:00", RFC_3339_FMT)?;
-        let d1 = NaiveDateTime::parse_from_str("2000-01-01T23:42:00", RFC_3339_FMT)?;
-        ScaleTime::new().domain(d0..d1)?.nice(None::<i32>)?
-    };
+        let scale = ScaleTime::new().domain(d0..d1)?.nice(None::<i32>)?;
 
-    let d0 = NaiveDateTime::parse_from_str("2000-01-01T00:00:00", RFC_3339_FMT)?;
-    let d1 = NaiveDateTime::parse_from_str("2000-01-02T00:00:00", RFC_3339_FMT)?;
-    assert_eq!(scale.domain.start, d0);
-    assert_eq!(scale.domain.end, d1);
+        assert_eq!(d0..d1, scale.domain);
 
-    Ok(())
-}
-
-#[test]
-fn nice_multi_year() -> Result<()> {
-    let scale = {
-        let d0 = NaiveDateTime::parse_from_str("2001-01-01T00:00:00", RFC_3339_FMT).unwrap();
-        let d1 = NaiveDateTime::parse_from_str("2138-01-01T00:42:00", RFC_3339_FMT).unwrap();
-        ScaleTime::new().domain(d0..d1)?.nice(None::<i32>)?
-    };
-
-    let d0 = NaiveDateTime::parse_from_str("2000-01-01T00:00:00", RFC_3339_FMT).unwrap();
-    let d1 = NaiveDateTime::parse_from_str("2140-01-01T00:00:00", RFC_3339_FMT).unwrap();
-    assert_eq!(scale.domain.start, d0);
-    assert_eq!(scale.domain.end, d1);
-
-    Ok(())
-}
-
-#[test]
-fn nice_works_on_empty_domain() -> Result<()> {
-    let d0 = NaiveDateTime::parse_from_str("2009-01-01T00:12:00", RFC_3339_FMT).unwrap();
-    let d1 = NaiveDateTime::parse_from_str("2009-01-01T00:12:00", RFC_3339_FMT).unwrap();
-
-    let scale = ScaleTime::new().domain(d0..d1)?.nice(None::<i32>)?;
-
-    assert_eq!(d0..d1, scale.domain);
-
-    Ok(())
-}
-
-#[test]
-fn nice_uses_the_specified_tick_count() -> Result<()> {
-    let scale = {
-        let d0 = NaiveDateTime::parse_from_str("2009-01-01T00:17:00", RFC_3339_FMT).unwrap();
-        let d1 = NaiveDateTime::parse_from_str("2009-01-01T23:42:00", RFC_3339_FMT).unwrap();
-
-        ScaleTime::new().domain(d0..d1)?
-    };
-
-    {
-        let d0 = NaiveDateTime::parse_from_str("2009-01-01T00:15:00", RFC_3339_FMT).unwrap();
-        let d1 = NaiveDateTime::parse_from_str("2009-01-01T23:45:00", RFC_3339_FMT).unwrap();
-        let domain = scale.clone().nice(Some(100))?.domain;
-
-        assert_eq!(d0..d1, domain);
+        Ok(())
     }
 
-    {
-        let d0 = NaiveDateTime::parse_from_str("2009-01-01T00:00:00", RFC_3339_FMT).unwrap();
-        let d1 = NaiveDateTime::parse_from_str("2009-01-02T00:00:00", RFC_3339_FMT).unwrap();
-        let domain = scale.clone().nice(Some(10))?.domain;
+    #[test]
+    fn nice_uses_the_specified_tick_count() -> Result<()> {
+        let scale = {
+            let d0 = NaiveDateTime::parse_from_str("2009-01-01T00:17:00", RFC_3339_FMT).unwrap();
+            let d1 = NaiveDateTime::parse_from_str("2009-01-01T23:42:00", RFC_3339_FMT).unwrap();
 
-        assert_eq!(d0..d1, domain);
+            ScaleTime::new().domain(d0..d1)?
+        };
+
+        {
+            let d0 = NaiveDateTime::parse_from_str("2009-01-01T00:15:00", RFC_3339_FMT).unwrap();
+            let d1 = NaiveDateTime::parse_from_str("2009-01-01T23:45:00", RFC_3339_FMT).unwrap();
+            let domain = scale.clone().nice(Some(100))?.domain;
+
+            assert_eq!(d0..d1, domain);
+        }
+
+        {
+            let d0 = NaiveDateTime::parse_from_str("2009-01-01T00:00:00", RFC_3339_FMT).unwrap();
+            let d1 = NaiveDateTime::parse_from_str("2009-01-02T00:00:00", RFC_3339_FMT).unwrap();
+            let domain = scale.clone().nice(Some(10))?.domain;
+
+            assert_eq!(d0..d1, domain);
+        }
+
+        Ok(())
     }
 
-    Ok(())
-}
+    #[test]
+    fn one_second_ticks() -> Result<()> {
+        let scale = {
+            let d0 = NaiveDateTime::parse_from_str("2011-01-01T12:00:00", RFC_3339_FMT)?;
+            let d1 = NaiveDateTime::parse_from_str("2011-01-01T12:00:04", RFC_3339_FMT)?;
+            ScaleTime::new().domain(d0..d1)?
+        };
 
-#[test]
-fn one_second_ticks() -> Result<()> {
-    let scale = {
-        let d0 = NaiveDateTime::parse_from_str("2011-01-01T12:00:00", RFC_3339_FMT)?;
-        let d1 = NaiveDateTime::parse_from_str("2011-01-01T12:00:04", RFC_3339_FMT)?;
-        ScaleTime::new().domain(d0..d1)?
-    };
+        let ticks = scale.ticks(Some(4));
 
-    let ticks = scale.ticks(Some(4));
+        assert_eq!(
+            NaiveDateTime::parse_from_str("2011-01-01T12:00:00", RFC_3339_FMT)?,
+            ticks[0]
+        );
+        assert_eq!(
+            NaiveDateTime::parse_from_str("2011-01-01T12:00:01", RFC_3339_FMT)?,
+            ticks[1]
+        );
+        assert_eq!(
+            NaiveDateTime::parse_from_str("2011-01-01T12:00:02", RFC_3339_FMT)?,
+            ticks[2]
+        );
+        assert_eq!(
+            NaiveDateTime::parse_from_str("2011-01-01T12:00:03", RFC_3339_FMT)?,
+            ticks[3]
+        );
+        assert_eq!(
+            NaiveDateTime::parse_from_str("2011-01-01T12:00:04", RFC_3339_FMT)?,
+            ticks[4]
+        );
 
-    assert_eq!(
-        NaiveDateTime::parse_from_str("2011-01-01T12:00:00", RFC_3339_FMT)?,
-        ticks[0]
-    );
-    assert_eq!(
-        NaiveDateTime::parse_from_str("2011-01-01T12:00:01", RFC_3339_FMT)?,
-        ticks[1]
-    );
-    assert_eq!(
-        NaiveDateTime::parse_from_str("2011-01-01T12:00:02", RFC_3339_FMT)?,
-        ticks[2]
-    );
-    assert_eq!(
-        NaiveDateTime::parse_from_str("2011-01-01T12:00:03", RFC_3339_FMT)?,
-        ticks[3]
-    );
-    assert_eq!(
-        NaiveDateTime::parse_from_str("2011-01-01T12:00:04", RFC_3339_FMT)?,
-        ticks[4]
-    );
-
-    Ok(())
+        Ok(())
+    }
 }

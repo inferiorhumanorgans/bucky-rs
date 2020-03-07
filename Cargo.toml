@@ -43,3 +43,7 @@ svg = "0.6" # Make this a dependency of the svg-* examples only
 [[example]]
 name = "d3-histogram"
 required-features = [ "dom-minidom" ]
+
+[[example]]
+name = "d3-bollinger"
+bench = true

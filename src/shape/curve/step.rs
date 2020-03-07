@@ -92,27 +92,32 @@ impl CurveContext for CurveStepContext {
     }
 }
 
-#[test]
-fn expected_results() {
-    use crate::shape::line::Line;
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    let mut line = Line::<(f64, f64)>::new()
-        .x(Box::new(|datum, _i| datum.0))
-        .y(Box::new(|datum, _i| datum.1))
-        .curve(Box::new(CurveStep::new()));
+    #[test]
+    fn expected_results() {
+        use crate::shape::line::Line;
 
-    {
-        let data: &[(f64, f64)] = &[(0., 1.)];
-        assert_eq!("M 0 1 L 0 1 z", line.generate(data));
-    }
+        let mut line = Line::<(f64, f64)>::new()
+            .x(Box::new(|datum, _i| datum.0))
+            .y(Box::new(|datum, _i| datum.1))
+            .curve(Box::new(CurveStep::new()));
 
-    {
-        let data: &[(f64, f64)] = &[(0., 1.), (2., 3.)];
-        assert_eq!("M 0 1 L 1 1 L 1 3 L 2 3", line.generate(data));
-    }
+        {
+            let data: &[(f64, f64)] = &[(0., 1.)];
+            assert_eq!("M 0 1 L 0 1 z", line.generate(data));
+        }
 
-    {
-        let data: &[(f64, f64)] = &[(0., 1.), (2., 3.), (4., 5.)];
-        assert_eq!("M 0 1 L 1 1 L 1 3 L 3 3 L 3 5 L 4 5", line.generate(data));
+        {
+            let data: &[(f64, f64)] = &[(0., 1.), (2., 3.)];
+            assert_eq!("M 0 1 L 1 1 L 1 3 L 2 3", line.generate(data));
+        }
+
+        {
+            let data: &[(f64, f64)] = &[(0., 1.), (2., 3.), (4., 5.)];
+            assert_eq!("M 0 1 L 1 1 L 1 3 L 3 3 L 3 5 L 4 5", line.generate(data));
+        }
     }
 }
