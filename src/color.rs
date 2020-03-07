@@ -52,8 +52,9 @@ impl From<Hsl> for Rgb {
         let foo = |n: u16| {
             let k: f64 = (n as f64 + hsl.hue / 30.0) % 12.0;
             let positions = [k - 3.0, 9.0 - k, 1.0];
-            let min = *positions
+            let min = positions
                 .iter()
+                .copied()
                 .min_by(|x, y| x.partial_cmp(y).expect("You promised no naan today"))
                 .unwrap();
 
