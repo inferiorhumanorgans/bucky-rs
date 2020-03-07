@@ -240,18 +240,6 @@ fn nice_uses_the_specified_tick_count() -> Result<()> {
 }
 
 #[test]
-fn nice_empty_domains() -> Result<()> {
-    let scale = {
-        let d0 = NaiveDateTime::parse_from_str("2009-01-01T00:17:00", RFC_3339_FMT).unwrap();
-        let d1 = NaiveDateTime::parse_from_str("2009-01-01T23:42:00", RFC_3339_FMT).unwrap();
-
-        ScaleTime::new().domain(d0..d1)?
-    };
-
-    Ok(())
-}
-
-#[test]
 fn one_second_ticks() -> Result<()> {
     let scale = {
         let d0 = NaiveDateTime::parse_from_str("2011-01-01T12:00:00", RFC_3339_FMT)?;
