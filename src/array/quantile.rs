@@ -32,7 +32,7 @@ impl Quantile {
 
         let i = (values.len() as f64 - 1.0) * p;
         let i0 = i.floor() as usize;
-        let k = order_stat::kth_by(&mut values, i0, |x, y| x.partial_cmp(y).unwrap());
+        order_stat::kth_by(&mut values, i0, |x, y| x.partial_cmp(y).expect("Float comparison failed"));
 
         let value0 = values[0..i0+1]
             .iter()
@@ -67,13 +67,29 @@ where DataType: Into<f64> + Copy {
 #[test]
 fn quantile() {
     let data = vec![0, 10, 30];
+
+    assert_eq!(data.quantile(0.0), 0.0);
     assert_eq!(data.quantile(0.5), 10.0);
+    assert_eq!(data.quantile(1.0), 30.0);
+    assert_eq!(data.quantile(0.25), 5.0);
+    assert_eq!(data.quantile(0.75), 20.0);
+    assert_eq!(data.quantile(0.1), 2.0);
 }
 
 #[test]
 fn quantile_by_key() {
     {
         let data = vec![0_i32, 10, 30];
-        assert_eq!(data.quantile_by_key(0.5, |d| (*d).into()), 10.0);
+
+        // If types can be inferred this works:
+        assert_eq!(data.quantile_by_key(0.0, |d| (*d).into()), 0.0);
+
+        // Otherwise we need to be explicit:
+        let accessor = |d : &i32| (*d).into();
+        assert_eq!(data.quantile_by_key(0.5, accessor), 10.0);
+        assert_eq!(data.quantile_by_key(1.0, accessor), 30.0);
+        assert_eq!(data.quantile_by_key(0.25, accessor), 5.0);
+        assert_eq!(data.quantile_by_key(0.75, accessor), 20.0);
+        assert_eq!(data.quantile_by_key(0.1, accessor), 2.0);
     }
 }
