@@ -5,9 +5,8 @@ use crate::error::{Result, ScaleError};
 use crate::interpolate::{NumberInterpolator, RangeInterpolator};
 use crate::scale::continuous::*;
 
-use date_iterator::{calendar_duration, CalendarDuration};
-
 use chrono::prelude::*;
+use date_iterator::{calendar_duration, CalendarDuration};
 
 const RFC_3339_FMT: &str = "%Y-%m-%dT%H:%M:%S";
 
@@ -131,16 +130,18 @@ where
             None => 10,
         };
 
-        let interval = self.domain.tick_increment(tick_count);
+        let interval : TickDuration = self.domain.tick_increment(tick_count);
+        let calendar_duration : CalendarDuration = CalendarDuration::from(&interval);
 
-        (0..=tick_count)
-            .map(|i| {
-                use std::ops::Mul;
+        let mut ticks = vec![];
+        let mut cur = self.domain.start;
 
-                let offset = CalendarDuration::from(&interval).mul(i);
-                calendar_duration::naive_add(&self.domain.start, &offset)
-            })
-            .collect()
+        while cur <= self.domain.end {
+            ticks.push(cur);
+            cur = calendar_duration::naive_checked_add(&cur, &calendar_duration).expect("Date math failed");
+        }
+
+        ticks
     }
 }
 
