@@ -16,6 +16,7 @@ time = [ "chrono", "date-iterator" ]
 
 [dependencies]
 thiserror = "1.0"
+order-stat = "0.1"
 
 # dom-minidom deps
 minidom = { path = "./minidom-rs", optional = true }
@@ -37,7 +38,7 @@ pathfinder_content = { git = "https://github.com/inferiorhumanorgans/pathfinder/
 csv = "1.1"
 serde = { version = "1.0", features = [ "derive" ] }
 serde_json = "1.0"
-svg = "0.6"
+svg = "0.6" # Make this a dependency of the svg-* examples only
 
 [[example]]
 name = "d3-histogram"

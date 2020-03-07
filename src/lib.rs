@@ -1,4 +1,5 @@
 extern crate thiserror;
+extern crate order_stat;
 
 #[cfg(feature = "time")]
 extern crate chrono;

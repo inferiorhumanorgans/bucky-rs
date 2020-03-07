@@ -53,6 +53,7 @@ dependencies = [
  "csv",
  "date-iterator",
  "minidom",
+ "order-stat",
  "pathfinder_canvas",
  "pathfinder_content",
  "pathfinder_geometry",
@@ -392,6 +393,12 @@ dependencies = [
  "hermit-abi",
  "libc",
 ]
+
+[[package]]
+name = "order-stat"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "efa535d5117d3661134dbf1719b6f0ffe06f2375843b13935db186cd094105eb"
 
 [[package]]
 name = "pathfinder_canvas"
