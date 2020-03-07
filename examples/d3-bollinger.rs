@@ -131,27 +131,24 @@ fn main() -> Result<()> {
         .attr("class", "x axis")
         .attr("transform", format!("translate(0, {})", CHART.height - CHART.margins.bottom));
     {
-        x_axis.append(Element::bare("line"))
-            .set_attr("stroke", "#1b191d")
-            .set_attr("stroke-width", "1px")
-            .set_attr("x1", CHART.margins.left - 1)
-            .set_attr("x2", CHART.width - CHART.margins.right + 1)
-            .set_attr("y1", 1)
-            .set_attr("y2", 1);
-
         // TODO: Don't call to_vec
         let tick_values : Vec<NaiveDateTime> = x.ticks(Some(CHART.width / 80))[1..].to_vec();
 
         let x_ticks = tick_values.into_iter().annotate("g", |builder, datum| {
             let mut tick = builder
                 .attr("class", "x axis tick")
-                .attr("transform", format!("translate({}, 12)",  x.scale(datum)));
+                .attr("transform", format!("translate({}, 0)",  x.scale(datum)));
+
+            tick.append(Element::bare("line"))
+                .set_attr("stroke", "rgb(27, 30, 35)")
+                .set_attr("y2", 6);
 
             tick.append(Element::bare("text"))
                 .set_attr("font-family", "B612 Mono")
                 .set_attr("font-size", "5pt")
                 .set_attr("text-anchor", "middle")
-                .set_attr("y", -9)
+                .set_attr("y", 9)
+                .set_attr("dy", "0.71em")
                 .append_text_node((|| {
                     use chrono::Datelike;
                     if datum.month0() == 0 {
@@ -182,18 +179,11 @@ fn main() -> Result<()> {
         y_axis.append(Element::bare("text"))
             .set_attr("font-family", "B612 Mono")
             .set_attr("font-size", "5pt")
+            .set_attr("font-weight", "bold")
             .set_attr("dy", "0.32em")
             .set_attr("x", 4)
             .set_attr("transform", format!("translate(0, {})", y.scale(tick_values.last().cloned().unwrap())))
             .append_text_node("$ Close");
-
-        y_axis.append(Element::bare("line"))
-            .set_attr("stroke", "#1b191d")
-            .set_attr("stroke-width", "1px")
-            .set_attr("x1", -1)
-            .set_attr("x2", -1)
-            .set_attr("y1", CHART.margins.top)
-            .set_attr("y2", CHART.height - CHART.margins.bottom + 1);
 
         use bucky::array::ticks::Ticks;
         let y_ticks = tick_values.into_iter().annotate("g", |builder, datum| {
@@ -209,6 +199,18 @@ fn main() -> Result<()> {
                 .set_attr("font-family", "B612 Mono")
                 .set_attr("text-anchor", "end")
                 .append_text_node(format!("{}", datum.round()));
+
+            tick.append(Element::bare("line"))
+                .set_attr("x2", -6)
+                .set_attr("stroke-width", "1px")
+                // .set_attr("stroke-opacity", 0.1)
+                .set_attr("stroke", "rgb(27, 30, 35)");
+
+            tick.append(Element::bare("line"))
+                .set_attr("x2", CHART.width - CHART.margins.left - CHART.margins.right)
+                .set_attr("stroke-width", "1px")
+                .set_attr("stroke-opacity", 0.1)
+                .set_attr("stroke", "rgb(27, 30, 35)");
 
             tick
         });
