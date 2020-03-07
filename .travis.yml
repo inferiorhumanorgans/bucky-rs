@@ -4,4 +4,4 @@ rust:
 cache: cargo
 script:
   - cargo build --lib --tests --examples
-  - cargo test
+  - cargo test --lib --examples
