@@ -33,7 +33,6 @@ impl TickIncrement<Range<NaiveDateTime>, TickDuration> for Range<NaiveDateTime> 
         ];
 
         let search_result = intervals.binary_search(&td_duration);
-
         let i: usize = match search_result {
             Ok(n) => n,
             Err(n) => n,
@@ -49,7 +48,15 @@ impl TickIncrement<Range<NaiveDateTime>, TickDuration> for Range<NaiveDateTime> 
 
             TickDuration::Years(tick_step as i32)
         } else if i > 0 {
-            intervals[i]
+            // TODO: CHECK FOR OVERFLOW and clean this up
+            let i0 = i64::from(&intervals[i - 1]) as i32;
+            let i1 = i64::from(&intervals[i]);
+
+            if (target / i0).num_seconds() < (i1 / target.num_seconds()) {
+                intervals[i-1]
+            } else {
+                intervals[i]
+            }
         } else {
             let seconds = CalendarDuration::from(&td_duration).duration_part().num_seconds();
             TickDuration::Milliseconds(seconds * 1000)
