@@ -1,10 +1,10 @@
 #[derive(Clone, Debug)]
-pub struct ScaleOrdinal<DomainType, RangeType> {
-    pub domain: Vec<DomainType>,
-    pub range: Vec<RangeType>,
+pub struct ScaleOrdinal<'a, DomainType, RangeType> {
+    pub domain: &'a [DomainType],
+    pub range: &'a [RangeType],
 }
 
-impl<DomainType, RangeType> ScaleOrdinal<DomainType, RangeType>
+impl<'a, DomainType, RangeType> ScaleOrdinal<'a, DomainType, RangeType>
 where
     DomainType: PartialEq + Copy,
     RangeType: PartialEq + Copy,
@@ -15,11 +15,11 @@ where
         }
     }
 
-    pub fn domain(self, domain: Vec<DomainType>) -> Self {
+    pub fn domain(self, domain: &'a [DomainType]) -> Self {
         Self { domain, ..self }
     }
 
-    pub fn range(self, range: Vec<RangeType>) -> Self {
+    pub fn range(self, range: &'a [RangeType]) -> Self {
         Self { range, ..self }
     }
 
@@ -31,11 +31,11 @@ where
     }
 }
 
-impl<DomainType, RangeType> Default for ScaleOrdinal<DomainType, RangeType> {
+impl<'a, DomainType, RangeType> Default for ScaleOrdinal<'a, DomainType, RangeType> {
     fn default() -> Self {
         Self {
-            domain: vec![],
-            range: vec![],
+            domain: &[],
+            range: &[],
         }
     }
 }
