@@ -42,14 +42,13 @@ where
     where
         NewInterpolator: RangeInterpolator<'a, RangeType>,
     {
-        let ret: ScaleLog<RangeType, NewInterpolator> = ScaleLog {
+        ScaleLog {
             interpolator,
             domain: self.domain,
             range: self.range,
             clamped: self.clamped,
             base: self.base,
-        };
-        ret
+        }
     }
 
     pub fn base(self, base: f64) -> Self {
