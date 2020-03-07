@@ -6,6 +6,6 @@ rust:
 cache: cargo
 
 script:
-  - cargo build --lib --tests --examples
-  - cargo test tests --lib --examples
+  - make build
+  - make test
 #  - cargo bench benches --lib --examples
