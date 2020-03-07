@@ -1,23 +1,26 @@
+use std::ops::Range;
+
 #[derive(Clone, Debug)]
-pub struct ScaleBand<DomainType> {
-    pub domain: Vec<DomainType>,
-    pub range: std::ops::Range<f64>,
+pub struct ScaleBand<'a, DomainType> {
+    pub domain: &'a [DomainType],
+    pub range: Range<f64>,
     pub padding_inner: f64,
     pub padding_outer: f64,
     pub align: f64,
     pub values: Vec<f64>,
     pub band_width: f64,
+    pub step: f64,
 }
 
-impl<DomainType> ScaleBand<DomainType>
+impl<'a, DomainType> ScaleBand<'a, DomainType>
 where
     DomainType: PartialEq + Copy + Clone,
 {
-    pub fn domain(self, domain: Vec<DomainType>) -> Self {
-        Self { domain, ..self }
+    pub fn domain(self, domain: &'a [DomainType]) -> Self {
+        Self { domain, ..self }.recalc()
     }
 
-    pub fn range<RangeIntermediateType>(self, range: std::ops::Range<RangeIntermediateType>) -> Self
+    pub fn range<RangeIntermediateType>(self, range: Range<RangeIntermediateType>) -> Self
     where
         RangeIntermediateType: Into<f64>,
     {
@@ -35,11 +38,31 @@ where
     }
 
     pub fn padding(self, padding: f64) -> Self {
-        let padding_outer = self.padding_outer + padding;
-        let padding_inner = self.padding_inner; //1_f64.min(padding_outer + padding);
+        let padding_inner = 1_f64.min(padding);
+        let padding_outer = padding;
 
         Self {
             padding_inner,
+            padding_outer,
+            ..self
+        }
+        .recalc()
+    }
+
+    pub fn padding_inner(self, padding: f64) -> Self {
+        let padding_inner = 1_f64.min(padding);
+
+        Self {
+            padding_inner,
+            ..self
+        }
+        .recalc()
+    }
+
+    pub fn padding_outer(self, padding: f64) -> Self {
+        let padding_outer = padding;
+
+        Self {
             padding_outer,
             ..self
         }
@@ -61,6 +84,7 @@ where
 
         Self {
             band_width,
+            step,
             values,
             ..self
         }
@@ -74,16 +98,153 @@ where
     }
 }
 
-impl<DomainType> Default for ScaleBand<DomainType> {
+impl<'a, DomainType> Default for ScaleBand<'a, DomainType>
+where
+    DomainType: PartialEq + Copy + Clone,
+{
     fn default() -> Self {
         Self {
-            domain: vec![],
+            domain: &[],
             range: 0.0..1.0,
             padding_inner: 0_f64,
             padding_outer: 0_f64,
             align: 0.5,
             values: vec![],
-            band_width: 0_f64,
+            band_width: std::f64::NAN,
+            step: std::f64::NAN,
+        }.recalc()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn expected_defaults() {
+        let scale = ScaleBand::<i32>::new();
+
+        let annotation : &[i32] = &[];
+        assert_eq!(annotation, scale.domain);
+        assert_eq!(0.0..1.0, scale.range);
+        assert_eq!(1.0, scale.band_width);
+        assert_eq!(1.0, scale.step);
+        assert_eq!(0.0, scale.padding_inner);
+        assert_eq!(0.0, scale.padding_outer);
+        assert_eq!(0.5, scale.align);
+
+        //     test.equal(s.round(), false);
+    }
+
+    #[test]
+    fn computes_discrete_bands_in_a_continuous_range() {
+        let scale = ScaleBand::<&str>::new()
+            .range(0..960);
+
+        {
+            let scale = scale.clone().domain(&["foo", "bar"]);
+            assert_eq!(0.0, scale.scale("foo"));
+            assert_eq!(480.0, scale.scale("bar"));
         }
+
+        {
+            let domain = &["a", "b", "c"];
+            let expected1 = &[0.0, 40.0, 80.0];
+            let expected2 = &[7.5, 45.0, 82.5];
+
+            let scale = scale.clone()
+                .domain(domain)
+                .range(0..120);
+
+            for (d, r) in domain.iter().zip(expected1) {
+                assert_eq!(*r, scale.scale(d))
+            }
+
+            assert_eq!(scale.band_width, 40.0);
+
+            let scale = scale.padding(0.2);
+
+            for (d, r) in domain.iter().zip(expected2) {
+                assert_eq!(*r, scale.scale(d))
+            }
+            assert_eq!(scale.band_width, 30.0);
+        }
+    }
+
+    #[test]
+    fn step_returns_the_distance_between_the_starts_of_adjacent_bands() {
+        let scale = ScaleBand::<&str>::new()
+            .range(0..960);
+
+        {
+            let scale = scale.clone().domain(&["foo"]);
+            assert_eq!(scale.step, 960.0);
+        }
+
+        {
+            let scale = scale.clone().domain(&["foo", "bar"]);
+            assert_eq!(scale.step, 480.0);
+        }
+
+        {
+            let scale = scale.clone().domain(&["foo", "bar", "baz"]);
+            assert_eq!(scale.step, 320.0);   
+        }
+
+        let scale = scale.padding(0.5);
+
+        {
+            let scale = scale.clone().domain(&["foo"]);
+            assert_eq!(scale.step, 640.0);
+        }
+
+        {
+            let scale = scale.clone().domain(&["foo", "bar"]);
+            assert_eq!(scale.step, 384.0);
+        }
+    }
+
+    #[test]
+    fn band_width_returns_the_width_of_the_band() {
+        let scale = ScaleBand::<&str>::new()
+            .range(0..960);
+
+        {
+            let scale = scale.clone().domain(&[]);
+            assert_eq!(scale.band_width, 960.0);
+        }
+
+        {
+            let scale = scale.clone().domain(&["foo"]);
+            assert_eq!(scale.band_width, 960.0);
+        }
+
+        {
+            let scale = scale.clone().domain(&["foo", "bar"]);
+            assert_eq!(scale.band_width, 480.0);
+        }
+
+        {
+            let scale = scale.clone().domain(&["foo", "bar", "baz"]);
+            assert_eq!(scale.band_width, 320.0);
+        }
+
+        let scale = scale.padding(0.5);
+
+        {
+            let scale = scale.clone().domain(&[]);
+            assert_eq!(scale.band_width, 480.0);
+        }
+
+        {
+            let scale = scale.clone().domain(&["foo"]);
+            assert_eq!(scale.band_width, 320.0);
+        }
+
+        {
+            let scale = scale.clone().domain(&["foo", "bar"]);
+            assert_eq!(scale.band_width, 192.0);
+        }
+
     }
 }
