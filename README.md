@@ -9,6 +9,13 @@ A typical workflow could involve: a bit of rust to generate the SVG document fol
 
 `bucky` is pre-alpha quality, may corrode your pipes if used in production, and is foremost an dive into learning Rust and experimenting with what a charting API could look like in rust.  Use at your own risk per the terms of the GNU GPL v3 or later.
 
+### Examples
+
+To compare and contrast with d3.js, some of the examples have been ported over to `bucky`. The SVGs make use of the [B612 Mono](https://github.com/polarsys/b612) and [Gill Sans](https://en.wikipedia.org/wiki/Gill_Sans) fonts. If you don't have the fonts installed locally, the PNG versions offer faithful interpretations of what things should look like.
+
+* [Bollinger Bands](examples/d3-bollinger.rs) ([`svg`](images/svg/d3-bollinger.svg), [`png`](images/png/d3-bollinger.png), [`d3`](https://observablehq.com/@d3/bollinger-bands))
+* [Histogam](examples/d3-histogram.rs) ([`svg`](images/svg/d3-histogram.svg), [`png`](images/png/d3-histogram.png), [`d3`](https://observablehq.com/@d3/histogram))
+
 ### TODO
 * There are currently copies of [date-iterator](https://github.com/kosta/date-iterator) and [minidom-rs](https://gitlab.com/xmpp-rs/minidom-rs) in tree.  Changes should be merged upstream.
 * Additional tests
