@@ -3,8 +3,13 @@ language: rust
 rust:
     - nightly
 
-cache: cargo
+cache:
+  directories:
+    - /home/travis/.cargo
 
+before_cache:
+  - rm -rf "$TRAVIS_HOME/.cargo/registry/src"
+  
 script:
   - make build
   - make test
