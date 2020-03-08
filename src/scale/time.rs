@@ -1,7 +1,7 @@
 use std::ops::Range;
 
 use crate::array::ticks::{TickDuration, TickIncrement};
-use crate::error::{Result, ScaleError};
+use crate::error::{Result, BuckyError};
 use crate::interpolate::{NumberInterpolator, RangeInterpolator};
 use crate::scale::continuous::*;
 
@@ -64,7 +64,7 @@ where
         DomainIntermediateType: Into<NaiveDateTime> + PartialOrd,
     {
         if domain.start > domain.end {
-            return Err(ScaleError::DescendingScale);
+            return Err(BuckyError::DescendingScale);
         }
 
         Ok(Self {

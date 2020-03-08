@@ -3,7 +3,7 @@ use std::ops::Range;
 use crate::array::ticks::{TickIncrement, Ticks};
 #[cfg(feature = "color")]
 use crate::color::Hsl;
-use crate::error::{Result, ScaleError};
+use crate::error::{Result, BuckyError};
 use crate::interpolate::*;
 use crate::scale::continuous::*;
 
@@ -28,7 +28,7 @@ where
         DomainIntermediateType: Into<f64> + PartialOrd,
     {
         if domain.start > domain.end {
-            return Err(ScaleError::DescendingScale);
+            return Err(BuckyError::DescendingScale);
         }
 
         Ok(Self {

@@ -1,7 +1,7 @@
 use std::ops::Range;
 
 use crate::array::ticks::Ticks;
-use crate::error::{Result, ScaleError};
+use crate::error::{Result, BuckyError};
 use crate::interpolate::*;
 use crate::scale::continuous::*;
 
@@ -108,7 +108,7 @@ where
         let domain = domain.start.into()..domain.end.into();
 
         if !((domain.end < 0.0 && domain.start < 0.0) || (domain.end > 0.0 && domain.start > 0.0)) {
-            return Err(ScaleError::DegenerateDomain);
+            return Err(BuckyError::DegenerateDomain);
         }
 
         Ok(Self { domain, ..self })

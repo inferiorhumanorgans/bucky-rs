@@ -1,7 +1,7 @@
 use thiserror::Error;
 
 #[derive(Debug, Error)]
-pub enum ScaleError {
+pub enum BuckyError {
     #[error("domain must not include 0")]
     DegenerateDomain,
 
@@ -12,4 +12,4 @@ pub enum ScaleError {
     ChronoParseError(#[from] chrono::ParseError),
 }
 
-pub type Result<T> = std::result::Result<T, ScaleError>;
+pub type Result<T> = std::result::Result<T, BuckyError>;
