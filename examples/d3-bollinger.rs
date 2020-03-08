@@ -216,7 +216,7 @@ fn main() -> Result<()> {
         });
 
         let y_tick_group = Element::builder("g")
-            .attr("class", "x axis tick-container")
+            .attr("class", "y axis tick-container")
             .append_all(y_ticks)
             .build();
         y_axis.append(y_tick_group);
