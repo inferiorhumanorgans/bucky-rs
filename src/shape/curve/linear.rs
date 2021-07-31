@@ -56,7 +56,10 @@ impl CurveContext for CurveLinearContext {
         if self.line_state == 1 {
             self.path.close_path();
         }
-        self.line_state -= 1;
+
+        if self.line_state > 0 {
+            self.line_state -= 1;
+        }
     }
 
     fn path(&self) -> &Path2D {
