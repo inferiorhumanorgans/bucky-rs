@@ -11,6 +11,8 @@ extern crate date_iterator;
 #[cfg(feature = "dom-minidom")]
 extern crate minidom;
 
+use std::ops::Range;
+
 /// Convenience structure to store a chart's margins
 #[derive(Debug)]
 pub struct Margins {
@@ -26,6 +28,23 @@ pub struct Chart {
     pub margins: Margins,
     pub width: i32,
     pub height: i32,
+}
+
+impl Chart {
+    /// Returns the range of X coordinates that the chart should span
+    pub fn inner_width_range(&self) -> Range<f64> {
+        (self.margins.left as f64)..((self.width - self.margins.right - self.margins.left) as f64)
+    }
+
+    /// Returns the range of Y coordinates that the chart should span
+    pub fn inner_height_range(&self) -> Range<f64> {
+        ((self.height - self.margins.bottom) as f64)..(self.margins.top as f64)
+    }
+
+    // Returns the X coordinate at the bottom of the chart
+    pub fn bottom(&self) -> f64 {
+        (self.height - self.margins.bottom) as f64
+    }
 }
 
 #[cfg(test)]
