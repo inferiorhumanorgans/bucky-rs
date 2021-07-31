@@ -1,0 +1,1 @@
+This is the [d3.js histogram example](https://observablehq.com/@d3/histogram) written with our bastardized fork of the [minidom](https://github.com/inferiorhumanorgans/minidom) crate for XML generation.

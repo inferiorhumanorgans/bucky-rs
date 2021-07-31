@@ -47,7 +47,7 @@ const CHART: Chart = Chart {
 };
 
 fn load_data() -> Vec<Record> {
-    let csv_data = include_str!("d3-histogram.csv");
+    let csv_data = include_str!("../source-data/d3-histogram.csv");
     let mut rdr = csv::Reader::from_reader(csv_data.as_bytes());
     rdr.deserialize().filter_map(std::result::Result::ok).collect()
 }
