@@ -55,7 +55,7 @@ where
         let stop: f64 = self.end.into();
 
         let step0: f64 = (stop - start).abs() / std::cmp::max(0, count) as f64;
-        let step1: f64 = 10_f64.powi((step0.ln() / LN_10).floor() as i32);
+        let step1: f64 = 10_f64.powf((step0.ln() / LN_10).floor());
         let error = step0 / step1;
         let step: f64;
 
