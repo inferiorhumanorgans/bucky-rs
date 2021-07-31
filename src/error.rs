@@ -2,6 +2,9 @@ use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum BuckyError {
+    #[error("Unknown Error")]
+    UnknownError,
+
     #[error("domain must not include 0")]
     DegenerateDomain,
 
