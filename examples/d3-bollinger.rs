@@ -127,7 +127,7 @@ fn main() -> Result<()> {
         .interpolator(RoundInterpolator::new())
         .range((CHART.height - CHART.margins.bottom - 20)..CHART.margins.top)?;
 
-    let mut x_axis = Element::builder("g")
+    let mut x_axis = Element::builder("g", "")
         .attr("class", "x axis")
         .attr("transform", format!("translate(0, {})", CHART.height - CHART.margins.bottom));
     {
@@ -139,11 +139,11 @@ fn main() -> Result<()> {
                 .attr("class", "x axis tick")
                 .attr("transform", format!("translate({}, 0)",  x.scale(datum)));
 
-            tick.append(Element::bare("line"))
+            tick.append(Element::bare("line", ""))
                 .set_attr("stroke", "rgb(27, 30, 35)")
                 .set_attr("y2", 6);
 
-            tick.append(Element::bare("text"))
+            tick.append(Element::bare("text", ""))
                 .set_attr("font-family", "B612 Mono")
                 .set_attr("font-size", "5pt")
                 .set_attr("text-anchor", "middle")
@@ -161,7 +161,7 @@ fn main() -> Result<()> {
             tick
         });
 
-        let x_tick_group = Element::builder("g")
+        let x_tick_group = Element::builder("g", "")
             .attr("transform", format!("translate(0, {})", CHART.margins.top))
             .attr("class", "x axis tick-container")
             .append_all(x_ticks)
@@ -169,14 +169,14 @@ fn main() -> Result<()> {
         x_axis.append(x_tick_group);
     }
 
-    let mut y_axis = Element::builder("g")
+    let mut y_axis = Element::builder("g", "")
         .attr("class", "y axis")
         .attr("transform", format!("translate({},0)", CHART.margins.left));
 
     {
         let tick_values = y.domain.ticks(Some(10));
 
-        y_axis.append(Element::bare("text"))
+        y_axis.append(Element::bare("text", ""))
             .set_attr("font-family", "B612 Mono")
             .set_attr("font-size", "5pt")
             .set_attr("font-weight", "bold")
@@ -191,7 +191,7 @@ fn main() -> Result<()> {
                 .attr("class", "y axis tick")
                 .attr("transform", format!("translate(0, {})",  y.scale(datum)));
 
-            tick.append(Element::bare("text"))
+            tick.append(Element::bare("text", ""))
                 .set_attr("fill", "#1b191d")
                 .set_attr("dy", "0.32em")
                 .set_attr("x", "-9")
@@ -200,13 +200,13 @@ fn main() -> Result<()> {
                 .set_attr("text-anchor", "end")
                 .append_text_node(format!("{}", datum.round()));
 
-            tick.append(Element::bare("line"))
+            tick.append(Element::bare("line", ""))
                 .set_attr("x2", -6)
                 .set_attr("stroke-width", "1px")
                 // .set_attr("stroke-opacity", 0.1)
                 .set_attr("stroke", "rgb(27, 30, 35)");
 
-            tick.append(Element::bare("line"))
+            tick.append(Element::bare("line", ""))
                 .set_attr("x2", CHART.width - CHART.margins.left - CHART.margins.right)
                 .set_attr("stroke-width", "1px")
                 .set_attr("stroke-opacity", 0.1)
@@ -215,7 +215,7 @@ fn main() -> Result<()> {
             tick
         });
 
-        let y_tick_group = Element::builder("g")
+        let y_tick_group = Element::builder("g", "")
             .attr("class", "y axis tick-container")
             .append_all(y_ticks)
             .build();
@@ -227,7 +227,7 @@ fn main() -> Result<()> {
         .y(Box::new(|datum, _i| y.scale(*datum)))
         .defined(Box::new(|datum, _i| !datum.is_nan()));
 
-    let neutral_line = Element::builder("path")
+    let neutral_line = Element::builder("path", "")
         .attr("stroke", "grey")
         .attr("fill", "none")
         .attr("stroke-width", 1.5)
@@ -235,7 +235,7 @@ fn main() -> Result<()> {
         .attr("stroke-linecap", "round")
         .attr("d", line.generate(values.as_slice()));
 
-    let green_line = Element::builder("path")
+    let green_line = Element::builder("path", "")
         .attr("stroke", "green")
         .attr("fill", "none")
         .attr("stroke-width", 1.5)
@@ -243,7 +243,7 @@ fn main() -> Result<()> {
         .attr("stroke-linecap", "round")
         .attr("d", line.generate(bands.lower.as_slice()));
 
-    let blue_line = Element::builder("path")
+    let blue_line = Element::builder("path", "")
         .attr("stroke", "blue")
         .attr("fill", "none")
         .attr("stroke-width", 1.5)
@@ -251,7 +251,7 @@ fn main() -> Result<()> {
         .attr("stroke-linecap", "round")
         .attr("d", line.generate(bands.mid.as_slice()));
 
-    let red_line = Element::builder("path")
+    let red_line = Element::builder("path", "")
         .attr("stroke", "red")
         .attr("fill", "none")
         .attr("stroke-width", 1.5)
@@ -261,8 +261,7 @@ fn main() -> Result<()> {
 
     let mut writer = Writer::new(Cursor::new(Vec::new()));
     
-    Element::builder("svg")
-        .ns("http://www.w3.org/2000/svg")
+    Element::builder("svg", "http://www.w3.org/2000/svg")
         .attr("viewBox", &[0, 0, CHART.width, CHART.height] as &[i32])
         .attr("overflow", "visible")
         .extend(x_axis.build())

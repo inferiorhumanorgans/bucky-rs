@@ -32,7 +32,7 @@ where
     fn next(&mut self) -> Option<minidom::Element> {
         self.iter
             .next()
-            .map(|d| (self.f)(Self::Item::builder(self.element_type), d).build())
+            .map(|d| (self.f)(Self::Item::builder(self.element_type, ""), d).build())
     }
 
     #[inline]

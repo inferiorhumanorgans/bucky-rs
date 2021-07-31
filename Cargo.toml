@@ -19,20 +19,16 @@ thiserror = "1.0"
 order-stat = "0.1"
 
 # dom-minidom deps
-minidom = { path = "./minidom-rs", optional = true }
-quick-xml = { version = "0.17.2", optional = true }
+minidom = { git = "https://github.com/inferiorhumanorgans/minidom", branch = "iho/bucky-support", optional = true }
+quick-xml = { version = "0.20", optional = true }
 
 # time deps
 chrono = { version = "0.4", features = [ "serde" ], optional = true }
-date-iterator = { path = "./date-iterator", optional = true }
+date-iterator = { git = "https://github.com/inferiorhumanorgans/date-iterator", branch = "iho/naive-funcs", optional = true }
 
-pathfinder_canvas = { git = "https://github.com/inferiorhumanorgans/pathfinder/", branch = "iho/path-debug-test" }
-pathfinder_geometry = { git = "https://github.com/inferiorhumanorgans/pathfinder/", branch = "iho/path-debug-test" }
-pathfinder_content = { git = "https://github.com/inferiorhumanorgans/pathfinder/", branch = "iho/path-debug-test" }
-
-# pathfinder_canvas = { path = "/Users/alex/pathfinder/canvas" }
-# pathfinder_geometry = { path = "/Users/alex/pathfinder/geometry" }
-# pathfinder_content = { path = "/Users/alex/pathfinder/content" }
+pathfinder_canvas = { git = "https://github.com/inferiorhumanorgans/pathfinder", branch = "iho/verbose-empty-contour" }
+pathfinder_geometry = { git = "https://github.com/inferiorhumanorgans/pathfinder", branch = "iho/verbose-empty-contour" }
+pathfinder_content = { git = "https://github.com/inferiorhumanorgans/pathfinder", branch = "iho/verbose-empty-contour" }
 
 [dev-dependencies]
 csv = "1.1"

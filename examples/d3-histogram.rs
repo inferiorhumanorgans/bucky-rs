@@ -90,12 +90,12 @@ fn main() -> Result<()> {
             .attr("height", y.scale(0.0) - y.scale(datum.values.len() as u32)) // TODO: Check for overflow
     });
 
-    let bar_group = Element::builder("g")
+    let bar_group = Element::builder("g", "")
         .attr("class", "bars")
         .append_all(bars)        
         .build();
 
-    let mut title = Element::builder("text")
+    let mut title = Element::builder("text", "")
         .attr("transform", format!("translate({}, {})", CHART.width - CHART.margins.right, CHART.margins.top as f64 * 1.5))
         .attr("font-family", "Gill Sans")
         .attr("font-weight", 100)
@@ -103,13 +103,13 @@ fn main() -> Result<()> {
         .attr("y", 0)
         .attr("text-anchor", "end");
 
-    title.append(Element::bare("tspan"))
+    title.append(Element::bare("tspan", ""))
         .set_attr("text-anchor", "end")
         .set_attr("x", 0)
         .set_attr("font-size", "18pt")
         .append_text_node("Unemployment rate by county, August 2016.");
 
-    title.append(Element::bare("tspan"))
+    title.append(Element::bare("tspan", ""))
         .set_attr("text-anchor", "end")
         .set_attr("x", 0)
         .set_attr("dy", "1.35em")
@@ -117,11 +117,11 @@ fn main() -> Result<()> {
         .append_text_node("Source: Bureau of Labor Statistics.");
 
 
-    let mut x_axis = Element::builder("g")
+    let mut x_axis = Element::builder("g", "")
         .attr("class", "x axis")
         .attr("transform", format!("translate(0, {})", CHART.height - CHART.margins.bottom));
 
-    x_axis.append(Element::bare("text"))
+    x_axis.append(Element::bare("text", ""))
         .set_attr("font-family", "B612 Mono")
         .set_attr("font-size", "5pt")
         .set_attr("y", "-4em")
@@ -130,7 +130,7 @@ fn main() -> Result<()> {
         .set_attr("transform", format!("translate(0, {})",  y.scale(y.domain.end)))
         .append_text_node("Unemployment (%)");
 
-    x_axis.append(Element::bare("line"))
+    x_axis.append(Element::bare("line", ""))
         .set_attr("stroke", "#1b191d")
         .set_attr("stroke-width", "1px")
         .set_attr("x1", CHART.margins.left - 1)
@@ -143,7 +143,7 @@ fn main() -> Result<()> {
             .attr("class", "x axis tick")
             .attr("transform", format!("translate({}, 0)",  x.scale(datum)));
 
-        tick.append(Element::bare("text"))
+        tick.append(Element::bare("text", ""))
             .set_attr("font-family", "B612 Mono")
             .set_attr("font-size", "5pt")
             .set_attr("text-anchor", "middle")
@@ -153,18 +153,18 @@ fn main() -> Result<()> {
         tick
     });
 
-    let x_tick_group = Element::builder("g")
+    let x_tick_group = Element::builder("g", "")
         .attr("transform", format!("translate(0, {})", CHART.margins.top))
         .attr("class", "x axis tick-container")
         .append_all(x_ticks)
         .build();
     x_axis.append(x_tick_group);
 
-    let mut y_axis = Element::builder("g")
+    let mut y_axis = Element::builder("g", "")
         .attr("class", "y axis")
         .attr("transform", format!("translate({},0)", CHART.margins.left));
 
-    y_axis.append(Element::bare("text"))
+    y_axis.append(Element::bare("text", ""))
         .set_attr("font-family", "B612 Mono")
         .set_attr("font-size", "5pt")
         .set_attr("dy", "0.32em")
@@ -172,7 +172,7 @@ fn main() -> Result<()> {
         .set_attr("transform", format!("translate(0, {})",  y.scale(y.domain.end)))
         .append_text_node("Counties (#)");
 
-    y_axis.append(Element::bare("line"))
+    y_axis.append(Element::bare("line", ""))
         .set_attr("stroke", "#1b191d")
         .set_attr("stroke-width", "1px")
         .set_attr("x1", -1)
@@ -185,7 +185,7 @@ fn main() -> Result<()> {
             .attr("class", "y axis tick")
             .attr("transform", format!("translate(0, {})",  y.scale(datum)));
 
-        tick.append(Element::bare("text"))
+        tick.append(Element::bare("text", ""))
             .set_attr("fill", "#1b191d")
             .set_attr("dy", "0.32em")
             .set_attr("x", "-9")
@@ -197,7 +197,7 @@ fn main() -> Result<()> {
         tick
     });
 
-    let y_tick_group = Element::builder("g")
+    let y_tick_group = Element::builder("g", "")
         .attr("class", "x axis tick-container")
         .append_all(y_ticks)
         .build();
@@ -205,8 +205,7 @@ fn main() -> Result<()> {
 
     let mut writer = Writer::new(Cursor::new(Vec::new()));
 
-    Element::builder("svg")
-        .ns("http://www.w3.org/2000/svg")
+    Element::builder("svg", "http://www.w3.org/2000/svg")
         .attr("viewBox", &[0, 0, CHART.width, CHART.height] as &[i32])
         .extend(title.build())
         .extend(x_axis.build())

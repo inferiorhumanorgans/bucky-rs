@@ -88,7 +88,7 @@ impl<'a, SourceType> Line<'a, SourceType> {
         context.end_line();
         let path_string = context.path().clone().into_outline();
 
-        format!("{:?}", path_string)
+        format!("{:#?}", path_string)
     }
 }
 
