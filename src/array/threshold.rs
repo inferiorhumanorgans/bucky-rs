@@ -1,6 +1,6 @@
 pub trait Threshold<DomainType>
 where
-    DomainType: Into<f64> + Clone + Copy,
+    DomainType: PartialOrd + Clone,
 {
     fn threshold(&self, domain: &[DomainType], min: DomainType, max: DomainType) -> usize;
 }
@@ -10,15 +10,10 @@ pub struct SturgesThreshold {}
 
 impl<DomainType> Threshold<DomainType> for SturgesThreshold
 where
-    DomainType: Into<f64> + Clone + Copy,
+    DomainType: PartialOrd + Clone,
 {
     fn threshold(&self, domain: &[DomainType], _min: DomainType, _max: DomainType) -> usize {
-        let mut work: Vec<f64> = domain
-            .clone()
-            .iter()
-            .map(|d| (*d).into())
-            .filter(|d: &f64| !d.is_nan())
-            .collect::<Vec<f64>>();
+        let mut work: Vec<DomainType> = domain.to_vec();
 
         work.sort_by(|a, b| a.partial_cmp(b).unwrap());
         work.dedup();
